@@ -88,6 +88,10 @@ services:
       - 9090:9090
     # networks:
     #   - proxy
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=exemplar-storage
+      - --enable-feature=native-histograms
     volumes:
       - /root/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
 
