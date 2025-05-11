@@ -4,6 +4,8 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    ports:
+      - 3005:3000
     env_file:
       - stack.env
     volumes:
@@ -26,11 +28,11 @@ services:
     container_name: otel-collector
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
-      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-    # ports:
-    #   - 13133:13133 # health_check extension
-    #   - 4317:4317 # OTLP gRPC receiver
-    #   - 1888:1888   # pprof extension
+      - /root/monitoring/otel-collector.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      - 1888:1888   # pprof extension
     #   - 55679:55679 # zpages extension
     # networks:
     #   - proxy
@@ -56,27 +58,16 @@ services:
     #   - proxy
     restart: unless-stopped
 
-  kaiassistant-postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:latest
-    container_name: kai-postgres-exporter
-    env_file:
-      - stack.env
-    environment:
-      - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
-    # networks:
-    #   - proxy
-    restart: unless-stopped
-
-  summahub-postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:latest
-    container_name: summahub-postgres-exporter
-    env_file:
-      - stack.env
-    environment:
-      - DATA_SOURCE_NAME=${SUMMAHUB_DATABASE_URL}
-    # networks:
-    #   - proxy
-    restart: unless-stopped
+  # db-postgres-exporter:
+  #   image: prometheuscommunity/postgres-exporter:latest
+  #   container_name: kai-postgres-exporter
+  #   env_file:
+  #     - stack.env
+  #   environment:
+  #     - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
+  #   # networks:
+  #   #   - proxy
+  #   restart: unless-stopped
 
   loki:
     image: grafana/loki:latest
@@ -86,7 +77,7 @@ services:
     # networks:
     #   - proxy
     volumes:
-      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/loki-config.yml:/etc/loki/local-config.yaml
+      - /root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
 
   prometheus:
@@ -95,7 +86,7 @@ services:
     # networks:
     #   - proxy
     volumes:
-      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /root/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
 
   tempo:
     image: grafana/tempo:latest
@@ -105,21 +96,8 @@ services:
     # networks:
     #   - proxy
     volumes:
-      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml
+      - /root/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml
     command: -config.file=/etc/tempo/tempo-config.yaml
-
-  code-server:
-    image: codercom/code-server:4.99.4-ubuntu
-    container_name: code-server
-    user: root
-    restart: unless-stopped
-    volumes:
-      - ./code-server-data:/home/coder/project
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - PASSWORD=admin
-    # networks:
-    #   - proxy
 
 # networks:
 #   proxy:
