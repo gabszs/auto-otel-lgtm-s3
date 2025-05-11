@@ -79,6 +79,8 @@ services:
     #   - proxy
     volumes:
       - /root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml
+      - loki-data:/var/loki
+
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
 
   prometheus:
@@ -114,3 +116,4 @@ services:
 
 volumes:
   grafana-data:
+  loki-data:
