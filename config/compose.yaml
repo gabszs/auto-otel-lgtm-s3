@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    env_file:
+      - stack.env
+    volumes:
+      - grafana-data:/var/lib/grafana
+    # networks:
+    #   - proxy
+    restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest 
+    container_name: jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    # networks:
+    #   - proxy
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    # ports:
+    #   - 13133:13133 # health_check extension
+    #   - 4317:4317 # OTLP gRPC receiver
+    #   - 1888:1888   # pprof extension
+    #   - 55679:55679 # zpages extension
+    # networks:
+    #   - proxy
+    depends_on:
+      - jaeger
+      - loki
+      - tempo
+      - prometheus
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    # networks:
+    #   - proxy
+    restart: unless-stopped
+
+  kaiassistant-postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: kai-postgres-exporter
+    env_file:
+      - stack.env
+    environment:
+      - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
+    # networks:
+    #   - proxy
+    restart: unless-stopped
+
+  summahub-postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: summahub-postgres-exporter
+    env_file:
+      - stack.env
+    environment:
+      - DATA_SOURCE_NAME=${SUMMAHUB_DATABASE_URL}
+    # networks:
+    #   - proxy
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: grafana-loki
+    # ports:
+    #   - "3100:3100"
+    # networks:
+    #   - proxy
+    volumes:
+      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/loki-config.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    # networks:
+    #   - proxy
+    volumes:
+      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: grafana-tempo
+    # ports:
+    #   - "3200:3200"
+    # networks:
+    #   - proxy
+    volumes:
+      - /home/innovox/workspace/innovox-kubernetes-deployments/portainer/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml
+    command: -config.file=/etc/tempo/tempo-config.yaml
+
+  code-server:
+    image: codercom/code-server:4.99.4-ubuntu
+    container_name: code-server
+    user: root
+    restart: unless-stopped
+    volumes:
+      - ./code-server-data:/home/coder/project
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PASSWORD=admin
+    # networks:
+    #   - proxy
+
+# networks:
+#   proxy:
+#     external: true
+#     name: proxy
+
+volumes:
+  grafana-data:
