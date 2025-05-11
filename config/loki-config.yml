@@ -1,0 +1,66 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9095
+
+ingester:
+  wal:
+    dir: "/tmp/wal"
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
+  chunk_target_size: 1536000
+  chunk_block_size: 262144
+
+schema_config:
+  configs:
+    - from: 2023-01-01
+      store: tsdb
+      object_store: s3
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    cache_ttl: 24h
+  aws:
+    s3: https://fb1330f65847752825fb05187c21c48e.r2.cloudflarestorage.com/grafana-loki
+    bucketnames: grafana-loki
+    region: 
+    access_key_id: 98c51402fc9ce6aac6ab7a8e1ea58edc
+    secret_access_key: a6ac4b4740809e36213575c1e0747ccd241346fb52eb40f589c2ae67c326e7aa
+    s3forcepathstyle: false
+
+compactor:
+  working_directory: /loki/compactor
+
+limits_config:
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+
+chunk_store_config:
+
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 168h
+
+ruler:
+  storage:
+    type: local
+    local:
+      directory: /loki/rules
+  rule_path: /loki/rules
+  ring:
+    kvstore:
+      store: inmemory
+  enable_api: true
