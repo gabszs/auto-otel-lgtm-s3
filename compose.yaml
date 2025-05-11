@@ -8,8 +8,8 @@ services:
       - 3005:3000
     env_file:
       - stack.env
-    volumes:
-      - grafana-data:/var/lib/grafana
+    # volumes:
+    #   - grafana-data:/var/lib/grafana
     # networks:
     #   - proxy
     restart: unless-stopped
