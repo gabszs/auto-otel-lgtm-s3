@@ -73,8 +73,8 @@ services:
   loki:
     image: grafana/loki:latest
     container_name: grafana-loki
-    # ports:
-    #   - "3100:3100"
+    ports:
+      - "3006:3000"
     # networks:
     #   - proxy
     volumes:
