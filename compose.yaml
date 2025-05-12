@@ -8,8 +8,6 @@ services:
       - 3005:3000
     env_file:
       - stack.env
-    # volumes:
-    #   - grafana-data:/var/lib/grafana
     # networks:
     #   - proxy
     restart: unless-stopped
@@ -34,7 +32,6 @@ services:
       - 4317:4317 # OTLP gRPC receiver
       - 4318:4318 # OTLP http receiver
       - 1888:1888   # pprof extension
-    #   - 55679:55679 # zpages extension
     # networks:
     #   - proxy
     depends_on:
@@ -79,7 +76,6 @@ services:
     #   - proxy
     volumes:
       - /root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml
-      # - loki-data:/var/loki
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
 
   prometheus:
@@ -107,19 +103,6 @@ services:
     volumes:
       - /root/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml
     command: -config.file=/etc/tempo/tempo-config.yaml
-
-  minio-svc:
-    image: minio/minio
-    container_name: minio-svc
-    ports:
-      - "9955:9000" # MiniO API port
-      - "9956:9001" # MiniO Console port for web ui
-    environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: adminadmin
-    command: server /data --console-address ":9001" # 9001 container port
-    volumes:
-      - minio_data:/data
 
 # networks:
 #   proxy:
