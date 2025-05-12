@@ -116,7 +116,7 @@ services:
       - "9956:9001" # MiniO Console port for web ui
     environment:
       MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: admin
+      MINIO_ROOT_PASSWORD: adminadmin
     command: server /data --console-address ":9001" # 9001 container port
     volumes:
       - minio_data:/data
