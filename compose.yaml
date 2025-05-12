@@ -108,6 +108,19 @@ services:
       - /root/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml
     command: -config.file=/etc/tempo/tempo-config.yaml
 
+  minio-svc:
+    image: minio/minio
+    container_name: minio-svc
+    ports:
+      - "9955:9000" # MiniO API port
+      - "9956:9001" # MiniO Console port for web ui
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin
+    command: server /data --console-address ":9001" # 9001 container port
+    volumes:
+      - minio_data:/data
+
 # networks:
 #   proxy:
 #     external: true
@@ -115,4 +128,4 @@ services:
 
 volumes:
   grafana-data:
-  # loki-data:
+  minio_data:
