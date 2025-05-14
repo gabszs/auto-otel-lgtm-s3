@@ -1,82 +1,22 @@
 version: '3.8'
-
 services:
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - 3005:3000
-    env_file:
-      - stack.env
-    # networks:
-    #   - proxy
-    restart: unless-stopped
-
-  # jaeger:
-  #   image: jaegertracing/all-in-one:latest 
-  #   container_name: jaeger
-  #   environment:
-  #     - COLLECTOR_ZIPKIN_HTTP_PORT=:9411
-  #     - COLLECTOR_OTLP_ENABLED=true
-    # networks:
-    #   - proxy
-
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
-    command: ["--config=/etc/otel-collector-config.yaml"]
+    command: [--config=/etc/otel-collector-config.yaml]
     volumes:
       - /root/monitoring/otel-collector.yaml:/etc/otel-collector-config.yaml
     ports:
-      - 13133:13133 # health_check extension
-      - 4317:4317 # OTLP gRPC receiver
-      - 4318:4318 # OTLP http receiver
-      - 1888:1888   # pprof extension
+      - 13133:13133  # health_check extension
+      - 4317:4317  # OTLP gRPC receiver
+      - 4318:4318  # OTLP http receiver
+      - 1888:1888  # pprof extension
     # networks:
     #   - proxy
     depends_on:
-      # - jaeger
       - loki
       - tempo
       - prometheus
-
-  # node-exporter:
-  #   image: prom/node-exporter:latest
-  #   container_name: node-exporter
-  #   volumes:
-  #     - /proc:/host/proc:ro
-  #     - /sys:/host/sys:ro
-  #     - /:/rootfs:ro
-  #   command:
-  #     - '--path.procfs=/host/proc'
-  #     - '--path.sysfs=/host/sys'
-  #     - '--path.rootfs=/rootfs'
-  #     - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-  #   # networks:
-  #   #   - proxy
-  #   restart: unless-stopped
-
-  # db-postgres-exporter:
-  #   image: prometheuscommunity/postgres-exporter:latest
-  #   container_name: kai-postgres-exporter
-  #   env_file:
-  #     - stack.env
-  #   environment:
-  #     - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
-  #   # networks:
-  #   #   - proxy
-  #   restart: unless-stopped
-
-  loki:
-    image: grafana/loki:latest
-    container_name: grafana-loki
-    ports:
-      - "3100:3100"
-    # networks:
-    #   - proxy
-    volumes:
-      - /root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml
-    command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
 
   prometheus:
     image: prom/prometheus:latest
@@ -93,6 +33,43 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: node-exporter
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #   command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--path.rootfs=/rootfs'
+  #     - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+  #  # networks:
+  #  #   - proxy
+  #   restart: unless-stopped
+
+  # db-postgres-exporter:
+  #   image: prometheuscommunity/postgres-exporter:latest
+  #   container_name: kai-postgres-exporter
+  #   env_file:
+  #     - stack.env
+  #   environment:
+  #     - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
+  #  # networks:
+  #  #   - proxy
+  #   restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: grafana-loki
+    ports:
+      - 3100:3100
+    # networks:
+    #   - proxy
+    volumes: [/root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml]
+    command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
+
   tempo:
     image: grafana/tempo:latest
     container_name: grafana-tempo
@@ -100,9 +77,18 @@ services:
     #   - "3200:3200"
     # networks:
     #   - proxy
-    volumes:
-      - /root/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml
-    command: -config.file=/etc/tempo/tempo-config.yaml
+    volumes: [/root/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml]
+    command: -config.file=/etc/tempo/tempo-config.yaml -config.expand-env=true
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports: [3005:3000]
+    env_file:
+      - stack.env
+    # networks:
+    #   - proxy
+    restart: unless-stopped
 
 # networks:
 #   proxy:
@@ -110,5 +96,5 @@ services:
 #     name: proxy
 
 volumes:
-  grafana-data:
   minio_data:
+  prometheus_data:
