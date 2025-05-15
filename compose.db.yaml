@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8007:80"
+    env_file:
+      - .env
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
+
+  # database:
+  #   image: postgres
+  #   ports:
+  #     - 5433:5432
+  #   environment:
+  #     POSTGRES_USER: app_user
+  #     POSTGRES_DB: app_db
+  #     POSTGRES_PASSWORD: app_password
