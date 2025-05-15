@@ -1,13 +1,19 @@
 # Local .terraform directories
 **/.terraform/*
-
+/config copy
+/scratch
+/lives
+/telemetry
 # .tfstate files
 *.tfstate
 *.tfstate.*
+/.mypy_cache
+/.ruff_cache
 *.env
+/api-test
 # Crash log files
 crash.log
-
+/magalu
 # Ignore any .tfvars files that are generated automatically for each Terraform run. Most
 # .tfvars files are managed as part of configuration and so should be included in
 # version control.

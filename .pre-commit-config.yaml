@@ -1,0 +1,81 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: trailing-whitespace
+        name: Remove trailing whitespace
+        description: This hook removes trailing whitespace.
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+      - id: debug-statements
+        language_version: python3
+      - id: check-merge-conflict
+      # - id: check-yaml
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.1.5
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v3.10.0
+    hooks:
+      - id: reorder-python-imports
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.10.1
+    hooks:
+      - id: pyupgrade
+        args: [--py38-plus]
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.37.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.5.0
+  #   hooks:
+  #     - id: mypy
+  #       name: MyPy
+  #       description: This hook runs MyPy to check Python type hints.
+
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.43
+    hooks:
+      - id: checkov
+        args: ['--framework', 'kubernetes']
+
+  # - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+  #   rev: v1.4.2
+  #   hooks:
+  #   -   id: python-safety-dependencies-check
+  #       files: pyproject.toml
+  #       args: ["--short-report"]
+
+  # - repo: https://github.com/Agilicus/pre-commit-hook-k8svalidate.git
+  #   rev: v0.0.8
+  #   hooks:
+  #     - id: k8svalidate
+  #       args: [--exclude, "**/*.patch.yaml", "config/prometheus.yml"]
+  #       files: .yaml$
+  #       language: python
+  #       types:
+  #       - yaml
+    
+  # - repo: https://github.com/Yelp/detect-secrets
+  #   rev: v1.5.0
+  #   hooks:
+  #   -   id: detect-secrets
+  #       name: Detect secrets
+  #       description: Detects high entropy strings that are likely to be passwords.
+  #       entry: detect-secrets-hook
+  #       language: python
+  #       # for backward compatibility
+  #       files: .*
