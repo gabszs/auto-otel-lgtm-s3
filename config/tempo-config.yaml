@@ -1,22 +1,56 @@
+---
 server:
   http_listen_port: 3200
-
+query_frontend:
+  search:
+    duration_slo: 5s
+    throughput_bytes_slo: 1.073741824e+09
+    max_duration: 168h
+  trace_by_id:
+    duration_slo: 5s
+  metrics:
+    max_duration: 168h
+    max_exemplars: 100000
 distributor:
   receivers:
     otlp:
       protocols:
         grpc:
-          endpoint: "0.0.0.0:4319"
+          endpoint: 0.0.0.0:4317
         http:
-  forwarders:
-    - name: otlp
-      backend: otlpgrpc
-      otlpgrpc:
-        tls:
-          insecure: true
-
+          endpoint: 0.0.0.0:4318
+# ingester:
+#   max_block_duration: 5m  # cut the headblock when this much time passes. this is being set for demo purposes and should probably be left alone normally
+compactor:
+  compaction:
+    block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  traces_storage:
+    path: /var/tempo/generator/traces
 storage:
   trace:
-    backend: local
+    backend: s3
+    s3:
+      bucket: ${TEMPO_BUCKET_NAME}
+      endpoint: ${TEMPO_BUCKET_ENDPOINT}
+      access_key: ${TEMPO_ACCESS_KEY}
+      secret_key: ${TEMPO_SECRET_KEY}
+      # insecure: true
+    wal:
+      path: /var/tempo/wal  # where to store the wal locally
     local:
-      path: /var/tempo/traces
+      path: /var/tempo/blocks
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics, local-blocks]
+      generate_native_histograms: both
