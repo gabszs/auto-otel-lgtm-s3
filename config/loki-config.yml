@@ -60,7 +60,7 @@ limits_config:
 
 ruler:
   storage:
-    type: s3  
+    type: s3
     s3:
       endpoint: ${LOKI_BUCKET_ENDPOINT}
       bucketnames: ${LOKI_RULES_BUCKET_NAME}
