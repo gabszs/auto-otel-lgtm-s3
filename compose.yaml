@@ -67,12 +67,16 @@ services:
       - 3100:3100
     # networks:
     #   - proxy
+    env_file:
+      - stack.env
     volumes: [/root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml]
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
 
   tempo:
     image: grafana/tempo:latest
     container_name: grafana-tempo
+    env_file:
+      - stack.env
     # ports:
     #   - "3200:3200"
     # networks:
