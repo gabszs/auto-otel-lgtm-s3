@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "telemetry"
+version = "0.1.0"
+description = ""
+authors = ["GabrielCarvalho <gabrielcarvalho.workk@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+fastapi = "^0.115.12"
+uvicorn = "^0.34.2"
+sqlalchemy = "^2.0.40"
+psycopg2-binary = "^2.9.10"
+email-validator = "^2.2.0"
+
+[tool.poetry.group.telemetry.dependencies]
+opentelemetry-instrumentation-logging = "^0.54b0"
+loguru = "^0.7.3"
+opentelemetry-distro = "^0.54b0"
+opentelemetry-exporter-otlp = "^1.33.0"
+
+[tool.poetry.group.dev.dependencies]
+taskipy = "^1.14.1"
+icecream = "^2.1.4"
+
+[tool.taskipy.tasks]
+run = "uvicorn app.main:app --port 8004"
+otel_run = "opentelemetry-instrument uvicorn app.main:app --port 8004"
+load_env = "export $(grep -v '^#' .env | xargs)"
+setup_otel = "opentelemetry-bootstrap -a install"
+commit_hook = "pre-commit run --all-files"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
