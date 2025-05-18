@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+import logging
 from functools import wraps
 from typing import Callable
 from typing import Dict
@@ -8,6 +9,9 @@ from opentelemetry import trace
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Tracer
 
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class TracingDecoratorOptions:
     class NamingSchemes:
