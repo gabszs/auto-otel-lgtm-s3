@@ -1,5 +1,14 @@
 version: '3.8'
 services:
+  postgres_exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: postgres_exporter
+    env_file:
+      - stack.env
+    environment:
+      - DATA_SOURCE_NAME=${POSTGRES_PROD_DATABASE_URL}
+    restart: unless-stopped
+    
   otel-collector:
     restart: unless-stopped
     image: otel/opentelemetry-collector-contrib:latest
