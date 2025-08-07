@@ -77,9 +77,6 @@ services:
     container_name: grafana-loki
     ports:
       - 3100:3100
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
     # networks:
     #   - proxy
     env_file:
