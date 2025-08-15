@@ -82,7 +82,7 @@ services:
     volumes:
       - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/local-config.yaml
-    command: -config.file=/etc/pyroscope/local-config.yaml -config.expand-env=true
+    command: --config.file=/etc/pyroscope/local-config.yaml --config.expand-env=true
     restart: unless-stopped
     # networks:
     #   - proxy
