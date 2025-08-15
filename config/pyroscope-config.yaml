@@ -3,7 +3,7 @@ server:
   http_listen_port: 9098
 
 metastore:
-  address: 0.0.0.0
+  address: 127.0.0.1
   min_ready_duration: 1s
 
 distributor:
