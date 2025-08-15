@@ -6,23 +6,37 @@ receivers:
         endpoint: 0.0.0.0:4318
       grpc:
         endpoint: 0.0.0.0:4317
+        cors:
+          allowed_origins:
+            - http://*
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+    path: "/ready"
+    
+processors:
+  batch:
+
 exporters:
   prometheus:
     endpoint: 0.0.0.0:8889
     resource_to_telemetry_conversion:
       enabled: true
-  otlphttp/loki:
+  otlphttp/logs:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
-  otlp/tempo:
+  otlp/traces:
     endpoint: tempo:4317
     tls:
       insecure: true
-    sending_queue:
-      enabled: true
-processors:
-  batch:
+    # sending_queue:
+    #   enabled: true
+  otlp/profiles:
+    endpoint: pyroscope:4040
+    tls:
+      insecure: true
+
 service:
   telemetry:
     metrics:
@@ -31,7 +45,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/tempo]
+      exporters: [otlp/traces]
     metrics:
       receivers: [otlp]
       processors: [batch]
@@ -39,4 +53,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/loki]
+      exporters: [otlphttp/logs]
+    profiles:
+      receivers: [otlp]
+      exporters: [otlp/profiles]
