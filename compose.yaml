@@ -70,6 +70,22 @@ services:
   #  # networks:
   #  #   - proxy
   #   restart: unless-stopped
+  
+  pyroscope:
+    image: pyroscope/pyroscope:latest
+    container_name: pyroscope
+    ports:
+      - "4040:4040"  # web UI
+      - "4041:4041"  # profiling server
+      - "9097:9097"  # gRPC server
+      - "9098:9098"  # HTTP server
+    volumes:
+      - pyroscope-data:/data/pyroscope
+      - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/local-config.yaml
+    command: -config.file=/etc/pyroscope/local-config.yaml -config.expand-env=true
+    restart: unless-stopped
+    # networks:
+    #   - proxy
 
   loki:
     restart: unless-stopped
@@ -113,5 +129,6 @@ services:
 #     name: proxy
 
 volumes:
-  minio_data:
-  prometheus_data:
+  pyroscope-data:
+  # minio_data:
+  # prometheus_data:
