@@ -1,16 +1,8 @@
 ---
 server:
   http_listen_port: 3200
-query_frontend:
-  search:
-    duration_slo: 5s
-    throughput_bytes_slo: 1.073741824e+09
-    max_duration: 168h
-  trace_by_id:
-    duration_slo: 5s
-  metrics:
-    max_duration: 168h
-    max_exemplars: 100000
+  grpc_listen_port: 9096
+
 distributor:
   receivers:
     otlp:
@@ -19,23 +11,23 @@ distributor:
           endpoint: 0.0.0.0:4317
         http:
           endpoint: 0.0.0.0:4318
-# ingester:
-#   max_block_duration: 5m  # cut the headblock when this much time passes. this is being set for demo purposes and should probably be left alone normally
-compactor:
-  compaction:
-    block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
-metrics_generator:
-  registry:
-    external_labels:
-      source: tempo
-      cluster: docker-compose
-  storage:
-    path: /var/tempo/generator/wal
-    remote_write:
-      - url: http://prometheus:9090/api/v1/write
-        send_exemplars: true
-  traces_storage:
-    path: /var/tempo/generator/traces
+
+ingester:
+  trace_idle_period: 10s       # espera 10s de inatividade antes de considerar o trace "finalizado"
+  max_block_duration: 30s      # envia blocos para o storage a cada 30s no máximo
+  flush_check_period: 5s       # checa a cada 5s se algum bloco precisa ser enviado
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    min_ready_duration: 1s
+
+# querier:
+#   frontend_worker:
+#     frontend_address: 127.0.0.1:9096
+
 storage:
   trace:
     backend: s3
@@ -49,8 +41,47 @@ storage:
       path: /var/tempo/wal  # where to store the wal locally
     local:
       path: /var/tempo/blocks
+
+metrics_generator:
+  processor:
+    local_blocks:
+      filter_server_spans: false
+    span_metrics:
+      dimensions:
+        - service_name
+        - operation
+        - status_code
+  traces_storage:
+    path: /var/tempo/generator/traces
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+
 overrides:
-  defaults:
-    metrics_generator:
-      processors: [service-graphs, span-metrics, local-blocks]
-      generate_native_histograms: both
+  metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
+  # defaults:
+  #   metrics_generator:
+  #     processors: [service-graphs, span-metrics, local-blocks]
+  #     generate_native_histograms: both
+
+compactor:
+  compaction:
+    block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
+
+query_frontend:
+  search:
+    duration_slo: 30s
+    throughput_bytes_slo: 1.073741824e+09
+    max_duration: 168h
+  trace_by_id:
+    duration_slo: 69s
+  metrics:
+    max_duration: 336h
+    max_exemplars: 100000
+
