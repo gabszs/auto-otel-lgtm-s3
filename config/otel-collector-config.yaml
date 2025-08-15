@@ -35,8 +35,7 @@ exporters:
     #   enabled: true
   otlp/profiles:
     endpoint: http://pyroscope:4040
-    tls:
-      insecure: true
+    insecure: true
 
 service:
   telemetry:
