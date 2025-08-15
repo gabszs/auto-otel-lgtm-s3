@@ -1,19 +1,12 @@
 version: '3.8'
-services:
-  postgres_exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter:latest
-    container_name: postgres_exporter
-    env_file:
-      - stack.env
-    environment:
-      - DATA_SOURCE_NAME=${POSTGRES_PROD_DATABASE_URL}
-    restart: unless-stopped
-    
+services:    
   otel-collector:
     restart: unless-stopped
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
-    command: [--config=/etc/otel-collector-config.yaml]
+    command:
+      - --config=/etc/otel-collector-config.yaml
+      - --feature-gates=service.profilesSupport
     volumes:
       - /root/monitoring/otel-collector.yaml:/etc/otel-collector-config.yaml
     ports:
@@ -95,6 +88,15 @@ services:
       - stack.env
     # networks:
     #   - proxy
+
+  postgres_exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: postgres_exporter
+    env_file:
+      - stack.env
+    environment:
+      - DATA_SOURCE_NAME=${POSTGRES_PROD_DATABASE_URL}
+    restart: unless-stopped
 
 # networks:
 #   proxy:
