@@ -44,33 +44,6 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
-  # node-exporter:
-  #   image: prom/node-exporter:latest
-  #   container_name: node-exporter
-  #   volumes:
-  #     - /proc:/host/proc:ro
-  #     - /sys:/host/sys:ro
-  #     - /:/rootfs:ro
-  #   command:
-  #     - '--path.procfs=/host/proc'
-  #     - '--path.sysfs=/host/sys'
-  #     - '--path.rootfs=/rootfs'
-  #     - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-  #  # networks:
-  #  #   - proxy
-  #   restart: unless-stopped
-
-  # db-postgres-exporter:
-  #   image: prometheuscommunity/postgres-exporter:latest
-  #   container_name: kai-postgres-exporter
-  #   env_file:
-  #     - stack.env
-  #   environment:
-  #     - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
-  #  # networks:
-  #  #   - proxy
-  #   restart: unless-stopped
-  
   pyroscope:
     image: pyroscope/pyroscope:latest
     container_name: pyroscope
@@ -132,3 +105,32 @@ volumes:
   pyroscope-data:
   # minio_data:
   # prometheus_data:
+
+
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: node-exporter
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #   command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--path.rootfs=/rootfs'
+  #     - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+  #  # networks:
+  #  #   - proxy
+  #   restart: unless-stopped
+
+  # db-postgres-exporter:
+  #   image: prometheuscommunity/postgres-exporter:latest
+  #   container_name: kai-postgres-exporter
+  #   env_file:
+  #     - stack.env
+  #   environment:
+  #     - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
+  #  # networks:
+  #  #   - proxy
+  #   restart: unless-stopped
+  
