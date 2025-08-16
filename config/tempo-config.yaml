@@ -46,7 +46,7 @@ metrics_generator:
   processor:
     service_graphs:
       histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
-      dimensions: ['http.method', 'http.target']dimensions: ['http.method', 'http.target']
+      dimensions: ['http.method', 'http.target']
     local_blocks:
       filter_server_spans: false
     span_metrics:
