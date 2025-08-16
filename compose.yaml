@@ -47,7 +47,8 @@ services:
       - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
     environment:
-      - pyroscope_url="http://pyroscope:4040"
+      - pyroscope_url="http://pyroscope:4050"
+      - listen_port=4051
     command: server -c /etc/pyroscope/server.yml -config.expand-env=true
     restart: unless-stopped
     # networks:
