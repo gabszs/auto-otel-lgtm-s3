@@ -40,6 +40,7 @@ services:
   pyroscope:
     image: grafana/pyroscope:1.14.0
     container_name: pyroscope
+    user: "0:0" 
     ports:
       - "4040:4040"  # Web UI
       - "4041:4041"  # Profiling server (OTLP / ingest)
