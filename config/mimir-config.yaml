@@ -42,6 +42,3 @@ alertmanager:
   data_dir: /data/alertmanager
   fallback_config_file: /etc/alertmanager-fallback-config.yaml
   external_url: http://alertmanager:9009/alertmanager
-
-server:
-  log_level: info
