@@ -59,7 +59,7 @@ services:
       - "4040:4040"  # Web UI
       - "4041:4041"  # Profiling server (OTLP / ingest)
     volumes:
-      - pyroscope-datamimir-data:/data/pyroscope
+      - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yaml
     env_file:
       - stack.env
