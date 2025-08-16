@@ -57,5 +57,4 @@ service:
       exporters: [otlphttp/logs]
     profiles:
       receivers: [otlp]
-      processors: [batch]
       exporters: [otlphttp/profiles]
