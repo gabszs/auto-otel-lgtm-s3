@@ -31,7 +31,8 @@ services:
     #   - proxy
     command:
       - --config.file=/etc/prometheus/prometheus.yaml
-      - --web.enable-remote-write-receiver
+      # - --web.enable-remote-write-receiver
+      - --enable-feature=remote-write-receiver
       - --enable-feature=exemplar-storage
       - --enable-feature=native-histograms
     volumes:
