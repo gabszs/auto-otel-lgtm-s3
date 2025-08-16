@@ -33,8 +33,8 @@ exporters:
       insecure: true
     # sending_queue:
     #   enabled: true
-  otlp/profiles:
-    endpoint: pyroscope:9097  # Use gRPC port (matches your Pyroscope config)
+  otlphttp/profiles:
+    endpoint: http://pyroscope:4040
     tls:
       insecure: true
 
@@ -57,4 +57,5 @@ service:
       exporters: [otlphttp/logs]
     profiles:
       receivers: [otlp]
-      exporters: [otlp/profiles]
+      processors: [batch]
+      exporters: [otlphttp/profiles]
