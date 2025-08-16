@@ -37,16 +37,18 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
-  pyroscope-profiling:
+  pyroscope:
     image: pyroscope/pyroscope:latest
-    container_name: pyroscope-profiling
+    container_name: pyroscope
     ports:
       - 4040:4040  # web UI
       - 4041:4041  # profiling server
     volumes:
       - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
-    command: server -c /etc/pyroscope/server.yml
+    environment:
+      - pyroscope_url="http://pyroscope:4040"
+    command: server -c /etc/pyroscope/server.yml -config.expand-env=true
     restart: unless-stopped
     # networks:
     #   - proxy
