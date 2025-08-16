@@ -49,8 +49,12 @@ services:
       - pyroscope-data-1:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
     environment:
-      PYROSCOPE_URL: http://pyroscope:4040
-      LISTEN_PORT: 4041
+      pyroscope: http://pyroscope:4040
+      endpoint: ${PYROSCOPE_BUCKET_ENDPOINT}
+      # region: "
+      bucket_name: ${PYROSCOPE_BUCKET_NAME}
+      access_key_id: ${PYROSCOPE_ACCESS_KEY}
+      secret_access_key: ${PYROSCOPE_SECRET_KEY}
     command:
       - --config.file=/etc/pyroscope/server.yml
       - --config.expand-env=true
