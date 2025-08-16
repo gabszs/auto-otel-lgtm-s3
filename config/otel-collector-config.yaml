@@ -34,7 +34,7 @@ exporters:
     # sending_queue:
     #   enabled: true
   otlp/profiles:
-    endpoint: http://pyroscope:4040
+    endpoint: http://pyroscope:4318
     insecure: true
 
 service:
