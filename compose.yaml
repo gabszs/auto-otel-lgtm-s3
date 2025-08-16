@@ -37,14 +37,12 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
-  pyroscope:
+  pyroscope-profiling:
     image: pyroscope/pyroscope:latest
-    container_name: pyroscope
+    container_name: pyroscope-profiling
     ports:
-      - "4040:4040"  # web UI
-      - "4041:4041"  # profiling server
-      - "9097:9097"  # gRPC server
-      - "9098:9098"  # HTTP server
+      - 4040:4040  # web UI
+      - 4041:4041  # profiling server
     volumes:
       - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
