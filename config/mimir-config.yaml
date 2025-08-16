@@ -38,7 +38,7 @@ ruler:
     heartbeat_period: 2s
     heartbeat_timeout: 10s
 
-alertmanager:
-  data_dir: /data/alertmanager
-  fallback_config_file: /etc/alertmanager-fallback-config.yaml
-  external_url: http://alertmanager:9009/alertmanager
+# alertmanager:
+#   data_dir: /data/alertmanager
+#   fallback_config_file: /etc/alertmanager-fallback-config.yaml
+#   external_url: http://alertmanager:9009/alertmanager
