@@ -38,7 +38,7 @@ services:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
   pyroscope:
-    image: pyroscope/pyroscope:1.14.0
+    image: grafana/pyroscope:1.14.0
     container_name: pyroscope
     ports:
       - "4040:4040"  # Web UI
