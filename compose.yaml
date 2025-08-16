@@ -43,7 +43,7 @@ services:
     hostname: mimir
     volumes:
       - /root/monitoring/mimir-config.yaml:/etc/mimir.yaml
-      # - /root/monitoring/alertmanager-fallback-config.yaml:/etc/alertmanager-fallback-config.yaml
+      - /root/monitoring/mimir-alertmanager-fallback-config.yaml:/etc/alertmanager-fallback-config.yaml
       - mimir-data:/data
     env_file:
       - stack.env
