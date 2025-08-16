@@ -48,6 +48,8 @@ services:
     volumes:
       - pyroscope-data-1:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
+    env_file:
+      - stack.env
     command:
       - --config.file=/etc/pyroscope/server.yml
       - --config.expand-env=true
