@@ -37,7 +37,6 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
-services:
   pyroscope:
     image: pyroscope/pyroscope:v1.14.0
     container_name: pyroscope
