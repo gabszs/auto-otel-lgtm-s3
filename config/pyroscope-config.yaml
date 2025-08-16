@@ -3,7 +3,7 @@ storage:
   backend: s3
   s3:
     endpoint: ${PYROSCOPE_BUCKET_ENDPOINT}
-    # region: "
+    # region: ""
     bucket_name: ${PYROSCOPE_BUCKET_NAME}
     access_key_id: ${PYROSCOPE_ACCESS_KEY}
     secret_access_key: ${PYROSCOPE_SECRET_KEY}
