@@ -1,15 +1,6 @@
 server:
   grpc_listen_port: 9097 # to avoid conflict with tempo
 
-distributor:
-  receivers:
-    otlp:
-      protocols:
-        grpc:
-          endpoint: 0.0.0.0:4317
-        http:
-          endpoint: 0.0.0.0:4318
-
 metastore:
   address: 127.0.0.1
   min_ready_duration: 1s
