@@ -48,7 +48,7 @@ services:
     volumes:
       - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
-    command: server -c /etc/pyroscope/local-config.yaml
+    command: server -c /etc/pyroscope/server.yml
     restart: unless-stopped
     # networks:
     #   - proxy
