@@ -1,5 +1,6 @@
 server:
   grpc_listen_port: 9097 # to avoid conflict with tempo
+  http_listen_port: 4050
 
 metastore:
   address: 127.0.0.1
