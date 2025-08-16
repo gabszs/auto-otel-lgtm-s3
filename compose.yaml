@@ -37,18 +37,19 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
+services:
   pyroscope:
     image: pyroscope/pyroscope:v1.14.0
     container_name: pyroscope
     ports:
-      - 4040:4040  # web UI
-      - 4041:4041  # profiling server
+      - "4040:4040"  # Web UI
+      - "4041:4041"  # Profiling server (OTLP / ingest)
     volumes:
       - pyroscope-data:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
     environment:
-      - pyroscope_url="http://pyroscope:4050"
-      - listen_port=4051
+      PYROSCOPE_URL: http://pyroscope:4040
+      LISTEN_PORT: 4041
     command:
       - --config.file=/etc/pyroscope/server.yml
       - --config.expand-env=true
