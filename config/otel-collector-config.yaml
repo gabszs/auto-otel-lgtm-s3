@@ -34,7 +34,7 @@ exporters:
     # sending_queue:
     #   enabled: true
   otlp/profiles:
-    endpoint: http://pyroscope:4318
+    endpoint: pyroscope:9097  # Use gRPC port (matches your Pyroscope config)
     tls:
       insecure: true
 
