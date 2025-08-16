@@ -38,6 +38,19 @@ services:
     volumes:
       - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
 
+  mimir:
+    image: grafana/mimir:latest
+    hostname: mimir
+    volumes:
+      - /root/monitoring/mimir-config.yaml:/etc/mimir.yaml
+      # - /root/monitoring/alertmanager-fallback-config.yaml:/etc/alertmanager-fallback-config.yaml
+      - mimir-data:/data
+    env_file:
+      - stack.env
+    command:
+      - --config.file=/etc/mimir.yaml
+      - --config.expand-env=true
+
   pyroscope:
     image: grafana/pyroscope:1.14.0
     container_name: pyroscope
@@ -46,12 +59,12 @@ services:
       - "4040:4040"  # Web UI
       - "4041:4041"  # Profiling server (OTLP / ingest)
     volumes:
-      - pyroscope-data-1:/data/pyroscope
-      - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
+      - pyroscope-datamimir-data:/data/pyroscope
+      - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yaml
     env_file:
       - stack.env
     command:
-      - --config.file=/etc/pyroscope/server.yml
+      - --config.file=/etc/pyroscope/server.yaml
       - --config.expand-env=true
     restart: unless-stopped
     # networks:
@@ -108,7 +121,8 @@ services:
 #     name: proxy
 
 volumes:
-  pyroscope-data-1:
+  pyroscope-data:
+  mimir-data:
   # minio_data:
   # prometheus_data:
 
