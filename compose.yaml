@@ -50,11 +50,15 @@ services:
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
     environment:
       pyroscope: http://pyroscope:4040
-      endpoint: ${PYROSCOPE_BUCKET_ENDPOINT}
-      # region: "
-      bucket_name: ${PYROSCOPE_BUCKET_NAME}
-      access_key_id: ${PYROSCOPE_ACCESS_KEY}
-      secret_access_key: ${PYROSCOPE_SECRET_KEY}
+      # endpoint: ${PYROSCOPE_BUCKET_ENDPOINT}
+      # region: ""int: ${PYROSCOPE_BUCKET_ENDPOINT}
+      # # region: "
+      # bucket_name: ${PYROSCOPE_BUCKET_NAME}
+      # access_key_id: ${PYROSCOPE_ACCESS_KEY}
+      # secret_access_key: ${PYROSCOPE_SECRET_KEY}
+      # bucket_name: ${PYROSCOPE_BUCKET_NAME}
+      # access_key_id: ${PYROSCOPE_ACCESS_KEY}
+      # secret_access_key: ${PYROSCOPE_SECRET_KEY}
     command:
       - --config.file=/etc/pyroscope/server.yml
       - --config.expand-env=true
