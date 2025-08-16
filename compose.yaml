@@ -44,7 +44,7 @@ services:
       - "4040:4040"  # Web UI
       - "4041:4041"  # Profiling server (OTLP / ingest)
     volumes:
-      - pyroscope-data:/data/pyroscope
+      - pyroscope-data-1:/data/pyroscope
       - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yml
     environment:
       PYROSCOPE_URL: http://pyroscope:4040
@@ -107,7 +107,7 @@ services:
 #     name: proxy
 
 volumes:
-  pyroscope-data:
+  pyroscope-data-1:
   # minio_data:
   # prometheus_data:
 
