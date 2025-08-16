@@ -1,10 +1,13 @@
 # s3 storage config
-endpoint: ${PYROSCOPE_BUCKET_ENDPOINT}
-# region: "
-bucket_name: ${PYROSCOPE_BUCKET_NAME}
-access_key_id: ${PYROSCOPE_ACCESS_KEY}
-secret_access_key: ${PYROSCOPE_SECRET_KEY}
-# insecure: true
+storage:
+  backend: s3
+  s3:
+    endpoint: ${PYROSCOPE_BUCKET_ENDPOINT}
+    # region: "
+    bucket_name: ${PYROSCOPE_BUCKET_NAME}
+    access_key_id: ${PYROSCOPE_ACCESS_KEY}
+    secret_access_key: ${PYROSCOPE_SECRET_KEY}
+    # insecure: true
 
 metastore:
   address: 127.0.0.1
