@@ -1,0 +1,47 @@
+server:
+  http_listen_address: 0.0.0.0
+  http_listen_port: 9009
+
+target: all,alertmanager,overrides-exporter
+
+# Configure Mimir to use Minio as object storage backend.
+common:
+  storage:
+    backend: s3
+    s3:
+      endpoint: ${MIMIR_BUCKET_ENDPOINT}
+      access_key_id: ${MIMIR_ACCESS_KEY}
+      secret_access_key: ${MIMIR_SECRET_KEY}
+      # insecure: true
+      bucket_name: ${MIMIR_BUCKET_ENDPOINT}
+
+# Blocks storage requires a prefix when using a common object storage bucket.
+blocks_storage:
+  storage_prefix: blocks
+  tsdb:
+    dir: /data/ingester
+
+# Use memberlist, a gossip-based protocol, to enable the 3 Mimir replicas to communicate
+memberlist:
+  bind_addr:
+    - 127.0.0.1
+
+ingester:
+  ring:
+    replication_factor: 1
+
+ruler:
+  rule_path: /data/ruler
+  alertmanager_url: http://alertmanager:8080/alertmanager
+  ring:
+    # Quickly detect unhealthy rulers to speed up the tutorial.
+    heartbeat_period: 2s
+    heartbeat_timeout: 10s
+
+alertmanager:
+  data_dir: /data/alertmanager
+  fallback_config_file: /etc/alertmanager-fallback-config.yaml
+  external_url: http://alertmanager:9009/alertmanager
+
+server:
+  log_level: info
