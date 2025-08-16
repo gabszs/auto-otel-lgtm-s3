@@ -13,7 +13,7 @@ common:
       access_key_id: ${MIMIR_ACCESS_KEY}
       secret_access_key: ${MIMIR_SECRET_KEY}
       # insecure: true
-      bucket_name: ${MIMIR_BUCKET_ENDPOINT}
+      bucket_name: ${MIMIR_BUCKET_NAME}
 
 # Blocks storage requires a prefix when using a common object storage bucket.
 blocks_storage:
