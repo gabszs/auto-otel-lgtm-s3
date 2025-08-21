@@ -10,6 +10,18 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:4317
 
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      cpu: {}
+      memory: {}
+      disk: {}
+      filesystem: {}
+      load: {}
+      network: {}
+      processes: {}
+      process: {}   # métricas do processo da aplicação (CPU/RAM)
+
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
@@ -48,7 +60,7 @@ service:
       processors: [batch]
       exporters: [otlp/traces]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, hostmetrics]
       processors: [batch]
       exporters: [prometheus]
     logs:
