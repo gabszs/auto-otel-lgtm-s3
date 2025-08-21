@@ -15,12 +15,12 @@ receivers:
     scrapers:
       cpu: {}
       memory: {}
-      disk: {}
-      filesystem: {}
       load: {}
       network: {}
-      processes: {}
-      process: {}   # métricas do processo da aplicação (CPU/RAM)
+      disk: {}
+      # filesystem: {}   # remove se não precisa
+      # process: {}      # remove se não precisa
+      # processes: {}    # remove se não precisa
 
 extensions:
   health_check:
