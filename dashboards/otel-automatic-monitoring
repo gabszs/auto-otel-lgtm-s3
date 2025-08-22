@@ -1104,7 +1104,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.2.0-16791878397",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
@@ -1146,15 +1146,18 @@
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
-      "pluginVersion": "12.2.0-16791878397",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
             "type": "${loki_ds}",
             "uid": "${loki_ds}"
           },
+          "direction": "backward",
+          "editorMode": "code",
           "expr": "{service_name=\"$service_name\"} | pattern `<date> <time> <type> <logger> <code> [<_>=<trace_id> <_>=<span_id> <_>=<service_name>] - <msg>` | line_format \"{{.service_name}}\\t{{.type}}\\t trace_id={{.trace_id}}\\t {{.msg}}\" |= \"$log_keyword\"",
           "hide": false,
+          "queryType": "range",
           "refId": "A"
         }
       ],
@@ -1206,7 +1209,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.0-16791878397",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
@@ -1276,7 +1279,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.2.0-16791878397",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
@@ -1375,7 +1378,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.2.0-16791878397",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
@@ -1445,7 +1448,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "12.2.0-16791878397",
+      "pluginVersion": "12.1.1",
       "targets": [
         {
           "datasource": {
@@ -1550,8 +1553,8 @@
       },
       {
         "current": {
-          "text": "pve-prod-password-generetor-api",
-          "value": "pve-prod-password-generetor-api"
+          "text": "staging-jsonfy-admin",
+          "value": "staging-jsonfy-admin"
         },
         "datasource": {
           "type": "prometheus",
@@ -1598,5 +1601,5 @@
   "timezone": "",
   "title": "Otel LGTM Observability",
   "uid": "otel-lgtm-observability",
-  "version": 1
+  "version": 3
 }
