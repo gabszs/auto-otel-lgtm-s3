@@ -1,120 +1,148 @@
 version: '3.8'
-services:    
+services:
+  # fastapi:
+  #   build:
+  #     context: ./fastapi_automatic_instrumentalization
+  #   ports:
+  #     - "8080:80"
+  #   environment:
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
+  #     - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
+  #     - OTEL_EXPORTER_OTLP_INSECURE=true
+  #     - OTEL_LOGS_EXPORTER=otlp
+  #     - OTEL_SERVICE_NAME=staging-jsonfy-admin
+  #     # - OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" # if your are using otel-collector:4318/http
+  #   depends_on:
+  #     - otel-collector
+
   otel-collector:
-    restart: unless-stopped
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     command:
       - --config=/etc/otel-collector-config.yaml
       - --feature-gates=service.profilesSupport
-    volumes:
-      - /root/monitoring/otel-collector.yaml:/etc/otel-collector-config.yaml
     ports:
-      - 13133:13133  # health_check extension
-      - 4317:4317  # OTLP gRPC receiver
-      - 4318:4318  # OTLP http receiver
-      - 1888:1888  # pprof extension
-      - 8859:8889  # prometheus scrape metrics
-    # networks:
-    #   - proxy
+      - 13133:13133
+      - 4317:4317
+      - 4318:4318
+      - 1888:1888
+      - 8859:8889
     depends_on:
       - loki
+      - mimir
       - tempo
+      - pyroscope
       - prometheus
-
-  prometheus:
-    restart: unless-stopped
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - 9090:9090
     # networks:
     #   - proxy
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      # - prometheus-data:/prometheus
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml
     command:
       - --config.file=/etc/prometheus/prometheus.yaml
-      # - --web.enable-remote-write-receiver
       - --enable-feature=remote-write-receiver
       - --enable-feature=exemplar-storage
       - --enable-feature=native-histograms
-    volumes:
-      - /root/monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    # networks:
+    #   - proxy
 
   mimir:
     image: grafana/mimir:latest
-    hostname: mimir
-    volumes:
-      - /root/monitoring/mimir-config.yaml:/etc/mimir.yaml
-      - /root/monitoring/mimir-alertmanager-fallback-config.yaml:/etc/alertmanager-fallback-config.yaml
-      - mimir-data:/data
+    container_name: mimir
+    restart: unless-stopped
     env_file:
       - stack.env
+    volumes:
+      - ./config/mimir-config.yaml:/etc/mimir.yaml
+      # - ./config/alert/mimir-alertmanager-fallback-config.yaml:/etc/mimir/alertmanager-fallback-config.yaml
+      # - mimir-data:/data
     command:
       - --config.file=/etc/mimir.yaml
       - --config.expand-env=true
 
+
   pyroscope:
     image: grafana/pyroscope:1.14.0
     container_name: pyroscope
-    user: "0:0" 
+    restart: unless-stopped
+    user: "0:0"
     ports:
-      - "4040:4040"  # Web UI
-      - "4041:4041"  # Profiling server (OTLP / ingest)
-    volumes:
-      - pyroscope-data:/data/pyroscope
-      - /root/monitoring/pyroscope-config.yaml:/etc/pyroscope/server.yaml
+      - "4040:4040"
+      - "4041:4041"
     env_file:
       - stack.env
+    volumes:
+      - ./config/pyroscope-config.yaml:/etc/pyroscope/server.yaml
+      - pyroscope-data:/data/pyroscope
     command:
       - --config.file=/etc/pyroscope/server.yaml
       - --config.expand-env=true
-    restart: unless-stopped
     # networks:
     #   - proxy
 
   loki:
-    restart: unless-stopped
     image: grafana/loki:latest
     container_name: grafana-loki
+    restart: unless-stopped
     ports:
       - 3100:3100
-    # networks:
-    #   - proxy
     env_file:
       - stack.env
-    volumes: [/root/monitoring/loki-config.yaml:/etc/loki/local-config.yaml]
+    volumes:
+      - ./config/loki-config.yaml:/etc/loki/config.yaml
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
+    # networks:
+    #   - proxy
 
   tempo:
-    restart: unless-stopped
     image: grafana/tempo:latest
     container_name: grafana-tempo
+    restart: unless-stopped
+    ports:
+      - "3200:3200"
     env_file:
       - stack.env
-    # ports:
-    #   - "3200:3200"
+    volumes:
+      - ./config/tempo-config.yaml:/etc/tempo/tempo-config.yaml
+    command: -config.file=/etc/tempo/tempo-config.yaml -config.expand-env=true
     # networks:
     #   - proxy
-    volumes: [/root/monitoring/tempo-config.yaml:/etc/tempo/tempo-config.yaml]
-    command: -config.file=/etc/tempo/tempo-config.yaml -config.expand-env=true
 
   grafana:
-    restart: unless-stopped
     image: grafana/grafana:latest
     container_name: grafana
-    ports: [3005:3000]
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
     env_file:
       - stack.env
+    # environment:
+    #   - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app,grafana-pyroscope-app
+    volumes:
+      - ./config/grafana/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/grafana-dashboards.yaml
+      - ./config/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./dashboards:/var/lib/grafana/dashboards
     # networks:
     #   - proxy
 
-  postgres_exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter:latest
-    container_name: postgres_exporter
-    env_file:
-      - stack.env
-    environment:
-      - DATA_SOURCE_NAME=${POSTGRES_PROD_DATABASE_URL}
-    restart: unless-stopped
+  # postgres_exporter:
+  #   image: quay.io/prometheuscommunity/postgres-exporter:latest
+  #   container_name: postgres_exporter
+  #   env_file:
+  #     - stack.env
+  #   environment:
+  #     - DATA_SOURCE_NAME=${POSTGRES_PROD_DATABASE_URL}
+  #   restart: unless-stopped
 
 # networks:
 #   proxy:
@@ -124,34 +152,4 @@ services:
 volumes:
   pyroscope-data:
   mimir-data:
-  # minio_data:
-  # prometheus_data:
-
-
-  # node-exporter:
-  #   image: prom/node-exporter:latest
-  #   container_name: node-exporter
-  #   volumes:
-  #     - /proc:/host/proc:ro
-  #     - /sys:/host/sys:ro
-  #     - /:/rootfs:ro
-  #   command:
-  #     - '--path.procfs=/host/proc'
-  #     - '--path.sysfs=/host/sys'
-  #     - '--path.rootfs=/rootfs'
-  #     - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-  #  # networks:
-  #  #   - proxy
-  #   restart: unless-stopped
-
-  # db-postgres-exporter:
-  #   image: prometheuscommunity/postgres-exporter:latest
-  #   container_name: kai-postgres-exporter
-  #   env_file:
-  #     - stack.env
-  #   environment:
-  #     - DATA_SOURCE_NAME=${KAI_DATABASE_URL}
-  #  # networks:
-  #  #   - proxy
-  #   restart: unless-stopped
-  
+  prometheus-data:
