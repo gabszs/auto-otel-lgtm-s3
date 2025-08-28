@@ -88,4 +88,3 @@ query_frontend:
   metrics:
     max_duration: 336h
     max_exemplars: 100000
-
