@@ -126,12 +126,37 @@ services:
       - "3000:3000"
     env_file:
       - stack.env
-    # environment:
-    #   - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app,grafana-pyroscope-app
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: grafana-db:5432
+      GF_DATABASE_NAME: grafana
+      GF_DATABASE_USER: grafana
+      GF_DATABASE_PASSWORD: grafana_pass
+      GF_DATABASE_SSL_MODE: disable
+      GF_SERVER_ROOT_URL: http://localhost:3000
+      GF_LOG_MODE: console
+      GF_LOG_LEVEL: info
+      GF_SECURITY_ADMIN_USER: gabriel
+      GF_SECURITY_ADMIN_PASSWORD: admin
     volumes:
       - ./config/grafana/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/grafana-dashboards.yaml
       - ./config/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - ./dashboards:/var/lib/grafana/dashboards
+    # networks:
+    #   - proxy
+
+  grafana-db:
+    image: postgres:15
+    container_name: grafana-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: grafana
+      POSTGRES_PASSWORD: grafana_pass
+      POSTGRES_DB: grafana
+    volumes:
+      - grafana-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     # networks:
     #   - proxy
 
@@ -153,3 +178,4 @@ volumes:
   pyroscope-data:
   mimir-data:
   prometheus-data:
+  grafana-db-data:
