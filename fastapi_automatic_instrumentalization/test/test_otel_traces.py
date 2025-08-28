@@ -12,9 +12,7 @@ resource = Resource(attributes={SERVICE_NAME: "test-service"})
 provider = TracerProvider(resource=resource)
 
 # Criar um exportador OTLP apontando para o seu coletor
-otlp_exporter = OTLPSpanExporter(
-    endpoint="https://collector.your_domain.dev/v1/traces"
-)
+otlp_exporter = OTLPSpanExporter(endpoint="https://collector.your_domain.dev/v1/traces")
 
 # Adicionar o exportador ao provedor
 processor = BatchSpanProcessor(otlp_exporter)

@@ -13,6 +13,7 @@ from opentelemetry.trace import Tracer
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 class TracingDecoratorOptions:
     class NamingSchemes:
         @staticmethod

@@ -1,7 +1,7 @@
 This project was inspired by and references the following works:
 
-- [fastapi-observability](https://github.com/Blueswen/fastapi-observability) – served as the basis for the dashboard and documentation.  
-- [opentelemetry-apm](https://github.com/blueswen/opentelemetry-apm) – used to run OpenTelemetry in a practical and structured way.  
+- [fastapi-observability](https://github.com/Blueswen/fastapi-observability) – served as the basis for the dashboard and documentation.
+- [opentelemetry-apm](https://github.com/blueswen/opentelemetry-apm) – used to run OpenTelemetry in a practical and structured way.
 
 Observe your FastAPI application with the pillars of observability on [Grafana-LGTM](https://github.com/grafana/grafana) and [Open-Telemetry](https://opentelemetry.io/docs/zero-code/python/) while easily persist this data on S3 (we recommend [cloudflare-r2](https://www.cloudflare.com/developer-platform/products/r2/), you get free 10GB storage with 1M writes and 10M reads):
 
@@ -66,4 +66,3 @@ localhost:3005
 
 # You can easly expose by pointing a tunnel/vpn/reverse-proxy to grafana_ip:3005
 ```
-

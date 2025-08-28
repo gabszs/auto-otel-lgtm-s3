@@ -10,8 +10,6 @@ package-mode = false
 python = ">=3.11,<3.14"
 fastapi = "^0.115.12"
 uvicorn = "^0.34.2"
-sqlalchemy = "^2.0.40"
-psycopg2-binary = "^2.9.10"
 email-validator = "^2.2.0"
 
 [tool.poetry.group.telemetry.dependencies]

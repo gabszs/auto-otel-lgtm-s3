@@ -2,11 +2,10 @@ import re
 from typing import List
 from typing import Optional
 
+from app.schemas.custom_base_model import CustomBaseModel
 from fastapi import Query
 from pydantic import BaseModel
 from pydantic import field_validator
-
-from app.schemas.custom_base_model import CustomBaseModel
 
 
 class PinPasswordOptions(BaseModel):

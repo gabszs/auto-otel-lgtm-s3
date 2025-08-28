@@ -1,15 +1,14 @@
 from asyncio import gather
 from typing import Annotated
 
-from fastapi import APIRouter
-from fastapi import Depends
-
 from app.core.dependencies import logger
 from app.schemas.input_schemas import PasswordBody
 from app.schemas.input_schemas import PasswordOptions
 from app.schemas.input_schemas import PinPasswordOptions
 from app.schemas.output_schemas import PasswordOutput
 from app.use_cases.password import PasswordGenerator
+from fastapi import APIRouter
+from fastapi import Depends
 
 _password_generator = Annotated[PasswordGenerator, Depends(PasswordGenerator)]
 router = APIRouter(tags=["Password-Generator"])
