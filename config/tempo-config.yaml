@@ -47,6 +47,8 @@ metrics_generator:
     service_graphs:
       histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
       dimensions: ['http.method', 'http.target']
+      enable_virtual_node_label: true
+      peer_attributes: ["peer.service", "db.name", "db.system"]
     local_blocks:
       filter_server_spans: false
     span_metrics:
@@ -55,6 +57,9 @@ metrics_generator:
         - operation
         - status_code
         - http_method
+        - service.name
+        - span.kind
+        - http.method
   traces_storage:
     path: /var/tempo/generator/traces
   storage:
