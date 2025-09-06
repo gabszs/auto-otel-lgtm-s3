@@ -68,10 +68,8 @@ metrics_generator:
       cluster: docker-compose
 
 overrides:
-  metrics_generator:
-    processors: [service-graphs, local-blocks, span-metrics]
-    generate_native_histograms: both
-  # metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
+  metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
+  # metrics_generate_native_histograms: both
 
 compactor:
   compaction:
