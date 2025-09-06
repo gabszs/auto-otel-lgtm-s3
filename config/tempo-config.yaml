@@ -43,7 +43,6 @@ storage:
       path: /var/tempo/blocks
 
 metrics_generator:
-  enabled: true
   processor:
     service_graphs:
       histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
@@ -69,8 +68,10 @@ metrics_generator:
       cluster: docker-compose
 
 overrides:
-  metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
-  generate_native_histograms: both
+  metrics_generator:
+    processors: [service-graphs, local-blocks, span-metrics]
+    generate_native_histograms: both
+  # metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
 
 compactor:
   compaction:
