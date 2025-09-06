@@ -26,20 +26,6 @@ extensions:
   health_check:
     endpoint: 0.0.0.0:13133
     path: "/ready"
-    
-connectors:
-  spanmetrics:
-    namespace: traces.spanmetrics  # Prefix for generated metrics
-    histogram:
-      unit: s  # Seconds for duration
-    dimensions:
-      - name: http.method
-        default: GET
-      - name: http.status_code
-    exemplars:
-      enabled: true
-  servicegraph:
-    latency_histogram_buckets: [100ms, 250ms, 1s, 5s, 10s]
 
 processors:
   batch:
@@ -72,7 +58,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/traces, spanmetrics, servicegraph]      
+      exporters: [otlp/traces]      
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
