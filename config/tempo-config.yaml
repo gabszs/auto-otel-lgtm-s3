@@ -78,9 +78,7 @@ overrides:
 
 compactor:
   compaction:
-    block_retention: 24h  # overall Tempo trace retention. set for demo purpose
-  retention:
-    traces: 156h
+    block_retention: 1h
 
 query_frontend:
   search:
