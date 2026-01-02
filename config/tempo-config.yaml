@@ -77,8 +77,7 @@ overrides:
 
 compactor:
   compaction:
-    block_retention: 1440h  # Global
-    # compacted_block_retention: 156h  # Para blocos já compactados
+    block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
     
 query_frontend:
   search:
