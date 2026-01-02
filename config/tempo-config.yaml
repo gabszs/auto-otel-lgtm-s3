@@ -74,15 +74,11 @@ metrics_generator:
 
 overrides:
   metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
-  defaults:  # Se não usar per-tenant
-    compaction:
-      block_retention: 156h
-  # metrics_generate_native_histograms: both
 
 compactor:
   compaction:
-    block_retention: 156h  # Global
-    compacted_block_retention: 156h  # Para blocos já compactados
+    block_retention: 1440h  # Global
+    # compacted_block_retention: 156h  # Para blocos já compactados
     
 query_frontend:
   search:
