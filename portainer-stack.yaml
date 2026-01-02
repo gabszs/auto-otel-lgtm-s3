@@ -72,7 +72,7 @@ services:
 
 
   pyroscope:
-    image: grafana/pyroscope:1.14.0
+    image: grafana/pyroscope:latest
     container_name: pyroscope
     restart: unless-stopped
     user: "0:0"
