@@ -72,8 +72,10 @@ metrics_generator:
       source: tempo
       cluster: docker-compose
 
+# CORRECT
 overrides:
-  metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
+  defaults:
+    metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
 
 compactor:
   compaction:
