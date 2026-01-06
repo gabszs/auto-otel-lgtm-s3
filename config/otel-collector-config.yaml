@@ -36,7 +36,7 @@ exporters:
   # hyper-dx
   # HTTP setup
   otlphttp/hdx:
-    endpoint: 'http://192.168.1.3:4328'
+    endpoint: 'http://192.168.1.3:4338'
     headers:
       authorization: "a7f549b1-c84b-4798-9809-b74c676540b5"
     compression: gzip
