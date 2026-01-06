@@ -29,8 +29,19 @@ extensions:
 
 processors:
   batch:
-
+    timeout: 5s
+    # send_batch_size: 1000
+    
 exporters:
+  # hyper-dx
+  # HTTP setup
+  otlphttp/hdx:
+    endpoint: 'http://hyperdx-otel-collector:4318'
+    headers:
+      authorization: "a7f549b1-c84b-4798-9809-b74c676540b5"
+    compression: gzip
+
+  # grafana
   prometheus:
     endpoint: 0.0.0.0:8889
     resource_to_telemetry_conversion:
@@ -58,15 +69,15 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/traces]      
+      exporters: [otlp/traces, otlphttp/hdx]      
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus]
+      exporters: [prometheus, otlphttp/hdx]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/logs]
+      exporters: [otlphttp/logs, otlphttp/hdx]
     profiles:
       receivers: [otlp]
       exporters: [otlphttp/profiles]
