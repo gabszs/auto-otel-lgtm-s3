@@ -30,7 +30,13 @@ extensions:
 processors:
   batch:
     timeout: 5s
-    # send_batch_size: 1000
+
+  probabilistic_sampler:
+    sampling_percentage: 100.0   # ajuste se quiser (ex: 10.0)
+    mode: proportional
+
+connectors:
+  forward: {}
     
 exporters:
   # hyper-dx
@@ -40,6 +46,12 @@ exporters:
     headers:
       authorization: "a7f549b1-c84b-4798-9809-b74c676540b5"
     compression: gzip
+
+  # OllyGarden
+  otlphttp/ollygarden:
+    endpoint: "https://in.ollygarden.cloud"
+    headers:
+      Authorization: "Bearer og_sk_ibEE57_5defe5669c31cfbd0eaf1e435bb59bab"
 
   # grafana
   prometheus:
@@ -69,15 +81,26 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/traces, otlphttp/hdx]      
-    metrics:
-      receivers: [otlp, hostmetrics]
-      processors: [batch]
-      exporters: [prometheus, otlphttp/hdx]
+      exporters: [otlp/traces, otlphttp/hdx, forward]
+    traces/ollygarden:
+      receivers: [forward]
+      processors: [probabilistic_sampler, batch]
+      exporters: [otlphttp/ollygarden]
+
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/logs, otlphttp/hdx]
+      exporters: [otlphttp/logs, otlphttp/hdx, forward]
+    logs/ollygarden:
+      receivers: [forward]
+      processors: [probabilistic_sampler, batch]
+      exporters: [otlphttp/ollygarden]
+
+    metrics:
+      receivers: [otlp, hostmetrics]
+      processors: [batch]
+      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden]
+      
     profiles:
       receivers: [otlp]
       exporters: [otlphttp/profiles]
