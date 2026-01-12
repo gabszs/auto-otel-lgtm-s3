@@ -32,7 +32,7 @@ processors:
     timeout: 5s
 
   probabilistic_sampler:
-    sampling_percentage: 100.0   # ajuste se quiser (ex: 10.0)
+    sampling_percentage: 5.0   # ajuste se quiser (ex: 10.0)
     mode: proportional
 
 connectors:
