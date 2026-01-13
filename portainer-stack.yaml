@@ -36,6 +36,8 @@ services:
       - tempo
       - pyroscope
       - prometheus
+    env_file:
+      - stack.env
     # networks:
     #   - proxy
 
