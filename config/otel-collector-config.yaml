@@ -29,7 +29,9 @@ extensions:
 
 processors:
   batch:
-    timeout: 5s
+    send_batch_max_size: 100
+    send_batch_size: 10
+    timeout: 10s
 
   probabilistic_sampler:
     sampling_percentage: 5.0   # ajuste se quiser (ex: 10.0)
@@ -37,6 +39,7 @@ processors:
 
 connectors:
   forward: {}
+  datadog/connector:
     
 exporters:
   # hyper-dx
@@ -44,14 +47,20 @@ exporters:
   otlphttp/hdx:
     endpoint: 'http://192.168.1.3:4338'
     headers:
-      authorization: "a7f549b1-c84b-4798-9809-b74c676540b5"
+      authorization: ${HDX_API_KEY}
     compression: gzip
 
   # OllyGarden
   otlphttp/ollygarden:
     endpoint: "https://in.ollygarden.cloud"
     headers:
-      Authorization: "Bearer og_sk_ibEE57_5defe5669c31cfbd0eaf1e435bb59bab"
+      Authorization: "Bearer ${OLLY_API_KEY}"
+
+  # Datadog
+  datadog/exporter:
+    api:
+      site: "datadoghq.com"
+      key: ${DATADOG_API_KEY}
 
   # grafana
   prometheus:
@@ -81,7 +90,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/traces, otlphttp/hdx, forward]
+      exporters: [otlp/traces, otlphttp/hdx, forward, datadog/connector, datadog/exporter]
     traces/ollygarden:
       receivers: [forward]
       processors: [probabilistic_sampler, batch]
@@ -90,16 +99,16 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/logs, otlphttp/hdx, forward]
+      exporters: [otlphttp/logs, otlphttp/hdx, forward, datadog/exporter]
     logs/ollygarden:
       receivers: [forward]
       processors: [probabilistic_sampler, batch]
       exporters: [otlphttp/ollygarden]
 
     metrics:
-      receivers: [otlp, hostmetrics]
+      receivers: [datadog/connector, otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden]
+      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden, datadog/exporter]
       
     profiles:
       receivers: [otlp]
