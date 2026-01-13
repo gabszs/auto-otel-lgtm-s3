@@ -1,20 +1,5 @@
 version: '3.8'
 services:
-  # fastapi:
-  #   build:
-  #     context: ./fastapi_automatic_instrumentalization
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
-  #     - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
-  #     - OTEL_EXPORTER_OTLP_INSECURE=true
-  #     - OTEL_LOGS_EXPORTER=otlp
-  #     - OTEL_SERVICE_NAME=staging-jsonfy-admin
-  #     # - OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" # if your are using otel-collector:4318/http
-  #   depends_on:
-  #     - otel-collector
-
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
@@ -30,6 +15,10 @@ services:
       - 4318:4318
       - 1888:1888
       - 8859:8889
+    environment:
+      DATADOG_API_KEY: ${DATADOG_API_KEY}
+      HDX_API_KEY: ${HDX_API_KEY}
+      OLLY_API_KEY: ${OLLY_API_KEY}
     depends_on:
       - loki
       - mimir
