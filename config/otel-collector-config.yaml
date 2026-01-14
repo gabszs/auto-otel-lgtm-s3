@@ -53,6 +53,10 @@ exporters:
   # OllyGarden
   otlphttp/ollygarden:
     endpoint: "https://in.ollygarden.cloud"
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 5000
     headers:
       Authorization: "Bearer ${OLLY_API_KEY}"
 
