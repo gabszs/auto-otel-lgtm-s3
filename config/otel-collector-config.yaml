@@ -71,17 +71,20 @@ exporters:
     endpoint: 0.0.0.0:8889
     resource_to_telemetry_conversion:
       enabled: true
-  otlphttp/logs:
+
+  otlphttp/loki:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
-  otlp/traces:
+
+  otlp/tempo:
     endpoint: tempo:4317
     tls:
       insecure: true
     # sending_queue:
     #   enabled: true
-  otlphttp/profiles:
+
+  otlphttp/pyroscope:
     endpoint: http://pyroscope:4040
     tls:
       insecure: true
@@ -96,7 +99,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/traces, otlphttp/hdx, forward, datadog/connector, datadog/exporter]
+      exporters: [otlp/tempo, otlphttp/hdx, forward, datadog/connector, datadog/exporter]
+
     traces/ollygarden:
       receivers: [forward]
       processors: [probabilistic_sampler, batch]
@@ -105,7 +109,8 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/logs, otlphttp/hdx, forward, datadog/exporter]
+      exporters: [otlphttp/loki, otlphttp/hdx, forward, datadog/exporter]
+
     logs/ollygarden:
       receivers: [forward]
       processors: [probabilistic_sampler, batch]
@@ -118,4 +123,4 @@ service:
       
     profiles:
       receivers: [otlp]
-      exporters: [otlphttp/profiles]
+      exporters: [otlphttp/pyroscope]
