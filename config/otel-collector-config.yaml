@@ -87,6 +87,8 @@ exporters:
       insecure: true
 
 service:
+  extensions:
+    - health_check
   telemetry:
     metrics:
       level: detailed
