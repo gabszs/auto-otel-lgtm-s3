@@ -99,7 +99,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/tempo, otlphttp/hdx, forward, datadog/connector, datadog/exporter]
+      exporters: [otlp/tempo, otlphttp/hdx, forward] # datadog/connector, datadog/exporter
 
     traces/ollygarden:
       receivers: [forward]
@@ -109,7 +109,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/loki, otlphttp/hdx, forward, datadog/exporter]
+      exporters: [otlphttp/loki, otlphttp/hdx, forward] # datadog/exporter
 
     logs/ollygarden:
       receivers: [forward]
@@ -117,9 +117,9 @@ service:
       exporters: [otlphttp/ollygarden]
 
     metrics:
-      receivers: [datadog/connector, otlp, hostmetrics]
+      receivers: [otlp, hostmetrics] # datadog/connector
       processors: [batch]
-      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden, datadog/exporter]
+      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden] # datadog/exporter
       
     profiles:
       receivers: [otlp]
