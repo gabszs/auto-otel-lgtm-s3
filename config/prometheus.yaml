@@ -77,7 +77,7 @@ scrape_configs:
       - source_labels: [__param_target__]
         target_label: instance
       - target_label: __address__
-        replacement: 192.168.1.5:9221 # PVE exporter IP address
+        replacement: 192.168.1.4:9221 # PVE exporter IP address
 
 # Alertmanager configuration
 alerting:
