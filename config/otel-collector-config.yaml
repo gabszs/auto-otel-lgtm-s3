@@ -46,7 +46,7 @@ exporters:
   otlphttp/grafana:
     endpoint: https://otlp-gateway-prod-sa-east-1.grafana.net/otlp
     headers:
-      Authorization: Basic MTUwNzg3NTpnbGNfZXlKdklqb2lNVFkxTWpVek9DSXNJbTRpT2lKemRHRmpheTB4TlRBM09EYzFMVzkwYkhBdGQzSnBkR1V0YjNSbGJDMWpiMnhzWldOMGIzSWlMQ0pySWpvaWVqWXlXRkkzUlhreFRGZDBNM294UWpBMGRUQk1OM0ZzSWl3aWJTSTZleUp5SWpvaWNISnZaQzF6WVMxbFlYTjBMVEVpZlgwPQ==
+      Authorization: "Bearer ${GF_LABS_COLLECTOR_API_KEY}" 
       
   # hyper-dx
   # HTTP setup
