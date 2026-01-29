@@ -76,9 +76,9 @@ overrides:
   metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
   # metrics_generate_native_histograms: both
 
-compactor:
-  compaction:
-    block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
+# compactor:
+#   compaction:
+#     block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
     
 query_frontend:
   search:
