@@ -42,6 +42,12 @@ connectors:
   datadog/connector:
     
 exporters:
+  # grafana labs
+  otlphttp/grafana:
+    endpoint: https://otlp-gateway-prod-sa-east-1.grafana.net/otlp
+    headers:
+      Authorization: Basic MTUwNzg3NTpnbGNfZXlKdklqb2lNVFkxTWpVek9DSXNJbTRpT2lKemRHRmpheTB4TlRBM09EYzFMVzkwYkhBdGQzSnBkR1V0YjNSbGJDMWpiMnhzWldOMGIzSWlMQ0pySWpvaWVqWXlXRkkzUlhreFRGZDBNM294UWpBMGRUQk1OM0ZzSWl3aWJTSTZleUp5SWpvaWNISnZaQzF6WVMxbFlYTjBMVEVpZlgwPQ==
+      
   # hyper-dx
   # HTTP setup
   otlphttp/hdx:
@@ -99,7 +105,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/tempo, otlphttp/hdx, forward] # datadog/connector, datadog/exporter
+      exporters: [otlp/tempo, otlphttp/hdx, otlphttp/grafana, forward] # datadog/connector, datadog/exporter
 
     traces/ollygarden:
       receivers: [forward]
@@ -109,7 +115,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/loki, otlphttp/hdx, forward] # datadog/exporter
+      exporters: [otlphttp/loki, otlphttp/hdx, otlphttp/grafana, forward] # datadog/exporter
 
     logs/ollygarden:
       receivers: [forward]
@@ -119,8 +125,8 @@ service:
     metrics:
       receivers: [otlp, hostmetrics] # datadog/connector
       processors: [batch]
-      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden] # datadog/exporter
+      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden, otlphttp/grafana] # datadog/exporter
       
     profiles:
       receivers: [otlp]
-      exporters: [otlphttp/pyroscope]
+      exporters: [otlphttp/pyroscope, otlphttp/grafana]
