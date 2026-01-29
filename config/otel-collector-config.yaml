@@ -27,6 +27,11 @@ extensions:
     endpoint: 0.0.0.0:13133
     path: "/health"
 
+  basicauth/grafana_cloud:
+    client_auth:
+      username: $GF_LABS_COLLECTOR_USER_ID
+      password: $GF_LABS_COLLECTOR_API_KEY
+
 processors:
   batch:
     send_batch_max_size: 100
@@ -44,9 +49,9 @@ connectors:
 exporters:
   # grafana labs
   otlphttp/grafana:
-    endpoint: https://otlp-gateway-prod-sa-east-1.grafana.net/otlp
-    headers:
-      Authorization: "Bearer ${GF_LABS_COLLECTOR_API_KEY}" 
+    endpoint: ${GF_LABS_COLLECTOR_URL}
+    auth:
+      authenticator: basicauth/grafana_cloud
       
   # hyper-dx
   # HTTP setup
@@ -98,6 +103,7 @@ exporters:
 service:
   extensions:
     - health_check
+    - basicauth/grafana_cloud
   telemetry:
     metrics:
       level: detailed
