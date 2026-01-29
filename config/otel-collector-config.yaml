@@ -49,9 +49,9 @@ connectors:
 exporters:
   # grafana labs
   otlphttp/grafana:
-    endpoint: "${GF_LABS_COLLECTOR_URL}"
-    auth:
-      authenticator: basicauth/grafana_cloud
+    endpoint: ${GF_LABS_COLLECTOR_URL}
+    headers:
+      authorization: ${GF_LABS_AUTH_HEADER}
       
   # hyper-dx
   # HTTP setup
