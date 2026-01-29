@@ -29,8 +29,8 @@ extensions:
 
   basicauth/grafana_cloud:
     client_auth:
-      username: $GF_LABS_COLLECTOR_USER_ID
-      password: $GF_LABS_COLLECTOR_API_KEY
+      username: "$GF_LABS_COLLECTOR_USER_ID"
+      password: "$GF_LABS_COLLECTOR_API_KEY"
 
 processors:
   batch:
@@ -49,7 +49,7 @@ connectors:
 exporters:
   # grafana labs
   otlphttp/grafana:
-    endpoint: ${GF_LABS_COLLECTOR_URL}
+    endpoint: "${GF_LABS_COLLECTOR_URL}"
     auth:
       authenticator: basicauth/grafana_cloud
       
