@@ -13,14 +13,14 @@ distributor:
           endpoint: 0.0.0.0:4318
 
 ingester:
-  trace_idle_period: 10s       # espera 10s de inatividade antes de considerar o trace "finalizado"
-  max_block_duration: 30s      # envia blocos para o storage a cada 30s no máximo
-  flush_check_period: 5s       # checa a cada 5s se algum bloco precisa ser enviado
+  trace_idle_period: 10s
+  max_block_duration: 30s
+  flush_check_period: 5s
   lifecycler:
     address: 127.0.0.1
     ring:
       kvstore:
-        store: inmemory
+        store: memberlist  # Mude para memberlist para formar o ring corretamente
       replication_factor: 1
     min_ready_duration: 1s
 
@@ -71,10 +71,15 @@ metrics_generator:
     external_labels:
       source: tempo
       cluster: docker-compose
+  ring:  # Adicione isso para o metrics-generator formar o ring
+      kvstore:
+        store: memberlist
 
 overrides:
-  metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
-  # metrics_generate_native_histograms: both
+  defaults:  # Use nesting com defaults para single-tenant
+    metrics_generator:
+      processors: [service-graphs, local-blocks, span-metrics]
+  # metrics_generate_native_histograms: both  # Descomente se quiser
 
 backend_worker:
   compaction:
