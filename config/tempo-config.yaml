@@ -37,7 +37,7 @@ storage:
       path: /var/tempo/wal # where to store the wal locally
     local:
       path: /var/tempo/blocks
-# metrics_generator:  # Comentado para desativar
+# metrics_generator: # Comentado para desativar
 #   processor:
 #     service_graphs:
 #       histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
@@ -67,7 +67,12 @@ storage:
 #       source: tempo
 #       cluster: docker-compose
 overrides:
-  # metrics_generator_processors: [service-graphs, local-blocks, span-metrics]  # Comentado para desativar
+  defaults:  # Aplicação global para single-tenant
+    ingestion:
+      rate_strategy: local  # Limites por instância (ideal para single-binary)
+      rate_limit_bytes: 1048576  # 1MB/s - ajuste para mais se precisar
+      burst_size_bytes: 2097152  # 2MB de burst para picos
+  # metrics_generator_processors: [service-graphs, local-blocks, span-metrics] # Comentado para desativar
   # metrics_generate_native_histograms: both
 backend_worker:
   compaction:
