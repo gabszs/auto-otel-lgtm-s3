@@ -76,9 +76,13 @@ overrides:
   metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
   # metrics_generate_native_histograms: both
 
-compactor:
+backend_worker:
   compaction:
-    block_retention: 1440h  # overall Tempo trace retention. set for demo purposes
+    block_retention: 1440h
+    compacted_block_retention: 1h
+    compaction_window: 4h
+    max_block_bytes: 5368709120
+    retention_concurrency: 10
     
 query_frontend:
   search:
