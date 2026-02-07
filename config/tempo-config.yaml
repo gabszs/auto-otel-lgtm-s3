@@ -24,9 +24,9 @@ ingester:
       replication_factor: 1
     min_ready_duration: 1s
 
-# querier:
-#   frontend_worker:
-#     frontend_address: 127.0.0.1:9096
+querier:
+  frontend_worker:
+    frontend_address: 127.0.0.1:9096
 
 storage:
   trace:
