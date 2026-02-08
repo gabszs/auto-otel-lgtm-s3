@@ -9,7 +9,6 @@ receivers:
             - http://*
       grpc:
         endpoint: 0.0.0.0:4317
-
   hostmetrics:
     collection_interval: 10s
     scrapers:
@@ -18,15 +17,11 @@ receivers:
       load: {}
       network: {}
       disk: {}
-      # filesystem: {}   # remove se não precisa
-      # process: {}      # remove se não precisa
-      # processes: {}    # remove se não precisa
 
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
     path: "/health"
-
   basicauth/grafana_cloud:
     client_auth:
       username: "$GF_LABS_COLLECTOR_USER_ID"
@@ -37,26 +32,23 @@ processors:
     send_batch_max_size: 100
     send_batch_size: 10
     timeout: 10s
-
   probabilistic_sampler:
-    sampling_percentage: 5.0   # ajuste se quiser (ex: 10.0)
+    sampling_percentage: 5.0
     mode: proportional
-
   transform:
     error_mode: ignore
     trace_statements:
       - context: span
         statements:
-          - replace_all_patterns(attributes["http.request.body"], "value", "(\"email\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(attributes["http.request.body"], "value", "(\"(username|user)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(attributes["http.request.body"], "value", "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(attributes["http.request.body"], "value", "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(attributes["http.request.body"], "value", "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
+          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"email\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
+          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"(username|user)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
+          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
+          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
+          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
 
 connectors:
   forward: {}
-  datadog/connector:
-    
+
 exporters:
   # grafana labs
   otlp_http/grafana:
@@ -65,7 +57,6 @@ exporters:
       authorization: ${GF_LABS_AUTH_HEADER}
       
   # hyper-dx
-  # HTTP setup
   otlp_http/hdx:
     endpoint: 'http://192.168.1.3:4338'
     headers:
@@ -82,30 +73,31 @@ exporters:
     headers:
       Authorization: "Bearer ${OLLY_API_KEY}"
 
-  # Datadog
-  datadog/exporter:
-    api:
-      site: "datadoghq.com"
-      key: ${DATADOG_API_KEY}
+  # Datadog (comentado - descomentar se for usar)
+  # datadog/exporter:
+  #   api:
+  #     site: "datadoghq.com"
+  #     key: ${DATADOG_API_KEY}
 
-  # grafana
+  # grafana prometheus
   prometheus:
     endpoint: 0.0.0.0:8889
     resource_to_telemetry_conversion:
       enabled: true
 
+  # Loki
   otlp_http/loki:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
 
+  # Tempo
   otlp_grpc/tempo:
     endpoint: tempo:4317
     tls:
       insecure: true
-    # sending_queue:otlp_grpcotlp_grpc
-    #   enabled: true
 
+  # Pyroscope
   otlp_http/pyroscope:
     endpoint: http://pyroscope:4040
     tls:
@@ -122,7 +114,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward] # datadog/connector, datadog/exporter
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward]
 
     traces/ollygarden:
       receivers: [forward]
@@ -132,7 +124,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward] # datadog/exporter
+      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward]
 
     logs/ollygarden:
       receivers: [forward]
@@ -140,9 +132,9 @@ service:
       exporters: [otlp_http/ollygarden]
 
     metrics:
-      receivers: [otlp, hostmetrics] # datadog/connector
+      receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana] # datadog/exporter
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana]
       
     profiles:
       receivers: [otlp]
