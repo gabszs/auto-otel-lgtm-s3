@@ -76,7 +76,7 @@ overrides:
   metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
   # metrics_generate_native_histograms: both
 
-backend_worker:
+compactor:
   compaction:
     block_retention: 1440h
     compacted_block_retention: 1h
