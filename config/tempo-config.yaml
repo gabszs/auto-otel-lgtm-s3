@@ -51,15 +51,15 @@ metrics_generator:
       peer_attributes: ["peer.service", "db.name", "db.system"]
     local_blocks:
       filter_server_spans: false
-    span_metrics:
-      dimensions:
-        - service_name
-        - operation
-        - status_code
-        - http_method
-        - service.name
-        - span.kind
-        - http.method
+    # span_metrics:
+    #   dimensions:
+    #     - service_name
+    #     - operation
+    #     - status_code
+    #     - http_method
+    #     - service.name
+    #     - span.kind
+    #     - http.method
   traces_storage:
     path: /var/tempo/generator/traces
   storage:
@@ -73,7 +73,7 @@ metrics_generator:
       cluster: docker-compose
 
 overrides:
-  metrics_generator_processors: [service-graphs, local-blocks, span-metrics]
+  metrics_generator_processors: [service-graphs, local-blocks] # span-metrics
   # metrics_generate_native_histograms: both
 
 compactor:
