@@ -38,20 +38,24 @@ processors:
     mode: proportional
   
   transform:
-      error_mode: ignore
-      trace_statements:
-        - context: span
-          statements:
-            # Redact email
-            - replace_pattern(attributes["http.request.body"], "(\"email\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
-            # Redact username/user
-            - replace_pattern(attributes["http.request.body"], "(\"(username|user)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
-            # Redact password
-            - replace_pattern(attributes["http.request.body"], "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
-            # Redact API keys
-            - replace_pattern(attributes["http.request.body"], "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
-            # Redact tokens/authorization
-            - replace_pattern(attributes["http.request.body"], "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          # Redact email
+          - replace_pattern(attributes["http.request.body"], "(\"email\"\\s*:\\s*\")([^\"]*)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact username/user
+          - replace_pattern(attributes["http.request.body"], "(\"(username|user)\"\\s*:\\s*\")([^\"]*)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact password
+          - replace_pattern(attributes["http.request.body"], "(\"password\"\\s*:\\s*\")([^\"]*)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact API keys (api-key, apiKey, api_token, etc)
+          - replace_pattern(attributes["http.request.body"], "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]*)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact tokens/authorization (authorization, token, bearer)
+          - replace_pattern(attributes["http.request.body"], "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]*)(\")", "$$1***REDACTED***$$3")
 
 connectors:
   forward: {}
