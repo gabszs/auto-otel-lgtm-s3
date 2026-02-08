@@ -68,21 +68,21 @@ connectors:
     
 exporters:
   # grafana labs
-  otlphttp/grafana:
+  otlp_http/grafana:
     endpoint: ${GF_LABS_COLLECTOR_URL}
     headers:
       authorization: ${GF_LABS_AUTH_HEADER}
       
   # hyper-dx
   # HTTP setup
-  otlphttp/hdx:
+  otlp_http/hdx:
     endpoint: 'http://192.168.1.3:4338'
     headers:
       authorization: ${HDX_API_KEY}
     compression: gzip
 
   # OllyGarden
-  otlphttp/ollygarden:
+  otlp_http/ollygarden:
     endpoint: "https://in.ollygarden.cloud"
     sending_queue:
       enabled: true
@@ -103,19 +103,19 @@ exporters:
     resource_to_telemetry_conversion:
       enabled: true
 
-  otlphttp/loki:
+  otlp_http/loki:
     endpoint: http://loki:3100/otlp
     tls:
       insecure: true
 
-  otlp/tempo:
+  otlp_grpc/tempo:
     endpoint: tempo:4317
     tls:
       insecure: true
-    # sending_queue:
+    # sending_queue:otlp_grpcotlp_grpc
     #   enabled: true
 
-  otlphttp/pyroscope:
+  otlp_http/pyroscope:
     endpoint: http://pyroscope:4040
     tls:
       insecure: true
@@ -131,28 +131,28 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp/tempo, otlphttp/hdx, otlphttp/grafana, forward] # datadog/connector, datadog/exporter
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward] # datadog/connector, datadog/exporter
 
     traces/ollygarden:
       receivers: [forward]
       processors: [probabilistic_sampler, batch]
-      exporters: [otlphttp/ollygarden]
+      exporters: [otlp_http/ollygarden]
 
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp/loki, otlphttp/hdx, otlphttp/grafana, forward] # datadog/exporter
+      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward] # datadog/exporter
 
     logs/ollygarden:
       receivers: [forward]
       processors: [probabilistic_sampler, batch]
-      exporters: [otlphttp/ollygarden]
+      exporters: [otlp_http/ollygarden]
 
     metrics:
       receivers: [otlp, hostmetrics] # datadog/connector
       processors: [batch]
-      exporters: [prometheus, otlphttp/hdx, otlphttp/ollygarden, otlphttp/grafana] # datadog/exporter
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana] # datadog/exporter
       
     profiles:
       receivers: [otlp]
-      exporters: [otlphttp/pyroscope, otlphttp/grafana]
+      exporters: [otlp_http/pyroscope, otlp_http/grafana]
