@@ -42,6 +42,26 @@ processors:
     sampling_percentage: 5.0   # ajuste se quiser (ex: 10.0)
     mode: proportional
 
+  transform:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          # Redact email - captura "email": "qualquer@coisa.com"
+          - replace_all_patterns(attributes["http.request.body"], "value", "(\"email\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact username/user - captura "username" ou "user": "valor"
+          - replace_all_patterns(attributes["http.request.body"], "value", "(\"(username|user)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact password - captura "password": "valor"
+          - replace_all_patterns(attributes["http.request.body"], "value", "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact API keys - captura "api_key", "apiKey", "api-key": "valor"
+          - replace_all_patterns(attributes["http.request.body"], "value", "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact Authorization/Bearer tokens
+          - replace_all_patterns(attributes["http.request.body"], "value", "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+
 connectors:
   forward: {}
   datadog/connector:
