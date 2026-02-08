@@ -36,6 +36,7 @@ processors:
   probabilistic_sampler:
     sampling_percentage: 5.0
     mode: proportional
+
   transform:
     error_mode: ignore
     trace_statements:
