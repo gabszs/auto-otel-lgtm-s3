@@ -32,19 +32,30 @@ processors:
     send_batch_max_size: 100
     send_batch_size: 10
     timeout: 10s
+
   probabilistic_sampler:
     sampling_percentage: 5.0
     mode: proportional
+
   transform:
     error_mode: ignore
     trace_statements:
       - context: span
         statements:
-          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"email\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"(username|user)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
-          - replace_all_patterns(span.attributes["http.request.body"], "value", "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]+)(\")", "$1***REDACTED***$3")
+          # Redact email
+          - replace_all_patterns(attributes["http.request.body"], "(\"email\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact username/user
+          - replace_all_patterns(attributes["http.request.body"], "(\"(username|user)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact password
+          - replace_all_patterns(attributes["http.request.body"], "(\"password\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact API keys
+          - replace_all_patterns(attributes["http.request.body"], "(\"(api[_-]?key|apiKey|api[_-]?token)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
+          
+          # Redact tokens/authorization
+          - replace_all_patterns(attributes["http.request.body"], "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]+)(\")", "$$1***REDACTED***$$3")
 
 connectors:
   forward: {}
