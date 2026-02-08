@@ -18,7 +18,7 @@ ingester:
     address: 127.0.0.1
     ring:
       kvstore:
-        store: inmemory
+        store: memberlist  # Mude para memberlist para formar o ring corretamente
       replication_factor: 1
     min_ready_duration: 1s
 querier:
@@ -37,42 +37,46 @@ storage:
       path: /var/tempo/wal # where to store the wal locally
     local:
       path: /var/tempo/blocks
-# metrics_generator: # Comentado para desativar
-#   processor:
-#     service_graphs:
-#       histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
-#       dimensions: ['http.method', 'http.target']
-#       enable_virtual_node_label: true
-#       peer_attributes: ["peer.service", "db.name", "db.system"]
-#     local_blocks:
-#       filter_server_spans: false
-#     span_metrics:
-#       dimensions:
-#         - service_name
-#         - operation
-#         - status_code
-#         - http_method
-#         - service.name
-#         - span.kind
-#         - http.method
-#   traces_storage:
-#     path: /var/tempo/generator/traces
-#   storage:
-#     path: /var/tempo/generator/wal
-#     remote_write:
-#       - url: http://prometheus:9090/api/v1/write
-#         send_exemplars: true
-#   registry:
-#     external_labels:
-#       source: tempo
-#       cluster: docker-compose
+metrics_generator:  # Descomente para ativar e resolver o erro de generators
+  processor:
+    service_graphs:
+      histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
+      dimensions: ['http.method', 'http.target']
+      enable_virtual_node_label: true
+      peer_attributes: ["peer.service", "db.name", "db.system"]
+    local_blocks:
+      filter_server_spans: false
+    span_metrics:
+      dimensions:
+        - service_name
+        - operation
+        - status_code
+        - http_method
+        - service.name
+        - span.kind
+        - http.method
+  traces_storage:
+    path: /var/tempo/generator/traces
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  ring:  # Adicione para o metrics-generator formar o ring
+    kvstore:
+      store: memberlist
 overrides:
   defaults:  # Aplicação global para single-tenant
     ingestion:
-      rate_strategy: local  # Limites por instância (ideal para single-binary)
-      rate_limit_bytes: 1048576  # 1MB/s - ajuste para mais se precisar
-      burst_size_bytes: 2097152  # 2MB de burst para picos
-  # metrics_generator_processors: [service-graphs, local-blocks, span-metrics] # Comentado para desativar
+      rate_strategy: local
+      rate_limit_bytes: 1048576  # 1MB/s
+      burst_size_bytes: 2097152  # 2MB de burst
+    metrics_generator:  # Ative os processadores aqui (se metrics_generator descomentado)
+      processors: [service-graphs, local-blocks, span-metrics]
   # metrics_generate_native_histograms: both
 backend_worker:
   compaction:
