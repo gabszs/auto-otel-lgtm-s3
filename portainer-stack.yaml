@@ -107,7 +107,7 @@ services:
     #   - proxy
 
   tempo:
-    image: grafana/tempo:2.7.1
+    image: grafana/tempo:2.8.2
     container_name: grafana-tempo
     restart: unless-stopped
     ports:
