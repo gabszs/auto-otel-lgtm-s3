@@ -130,7 +130,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [transform, batch]
       exporters: [otlp/tempo, otlphttp/hdx, otlphttp/grafana, forward] # datadog/connector, datadog/exporter
 
     traces/ollygarden:
