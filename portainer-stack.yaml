@@ -41,6 +41,15 @@ services:
     # networks:
     #   - proxy
 
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    ports:
+      - "12345:12345"
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
