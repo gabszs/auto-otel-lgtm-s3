@@ -2,7 +2,6 @@ remotecfg {
   url            = env("GCLOUD_FM_URL")
   id             = env("GCLOUD_FM_HOSTED_ID")
   poll_frequency = env("GCLOUD_FM_POLL_FREQUENCY")
-
   basic_auth {
     username = env("GCLOUD_FM_HOSTED_ID")
     password = env("GCLOUD_RW_API_KEY")
@@ -16,7 +15,6 @@ otelcol.receiver.otlp "default" {
   http {
     endpoint = "0.0.0.0:4318"
   }
-
   output {
     metrics = [otelcol.exporter.prometheus.default.input]
     logs    = [otelcol.exporter.loki.default.input]
@@ -30,7 +28,6 @@ otelcol.exporter.prometheus "default" {
 prometheus.remote_write "default" {
   endpoint {
     url = env("GCLOUD_HOSTED_METRICS_URL")
-
     basic_auth {
       username = env("GCLOUD_HOSTED_METRICS_ID")
       password = env("GCLOUD_RW_API_KEY")
@@ -45,7 +42,6 @@ otelcol.exporter.loki "default" {
 loki.write "default" {
   endpoint {
     url = env("GCLOUD_HOSTED_LOGS_URL")
-
     basic_auth {
       username = env("GCLOUD_HOSTED_LOGS_ID")
       password = env("GCLOUD_RW_API_KEY")
@@ -54,10 +50,9 @@ loki.write "default" {
 }
 
 // POSTGRES DBM CONFIG
-prometheus.exporter.postgres "postgres_auth" {
-  data_source_names  = [env("POSTGRES_DSN")]
+prometheus.exporter.postgres "postgres_auth_fastapi" {
+  data_source_names  = [env("AUTH_FASTAPI_POSTGRES_DSN")]
   enabled_collectors = ["stat_statements"]
-
   autodiscovery {
     enabled = true
   }
@@ -72,7 +67,6 @@ database_observability.postgres "postgres_auth_fastapi" {
 
 loki.relabel "database_observability_postgres_auth_fastapi" {
   forward_to = [loki.write.default.receiver]
-
   rule {
     target_label = "instance"
     replacement  = "192.168.1.3:5443"
@@ -85,7 +79,6 @@ loki.relabel "database_observability_postgres_auth_fastapi" {
 
 discovery.relabel "database_observability_postgres_auth_fastapi" {
   targets = database_observability.postgres.postgres_auth_fastapi.targets
-
   rule {
     target_label = "job"
     replacement  = "integrations/db-o11y"
