@@ -1,1 +1,76 @@
+remotecfg {
+  url            = env("GCLOUD_FM_URL")
+  id             = env("GCLOUD_FM_HOSTED_ID")
+  poll_frequency = env("GCLOUD_FM_POLL_FREQUENCY")
 
+  basic_auth {
+    username = env("GCLOUD_FM_HOSTED_ID")
+    password = env("GCLOUD_RW_API_KEY")
+  }
+}
+
+prometheus.exporter.unix "default" {
+  disable_collectors = ["mdadm"]
+}
+
+prometheus.scrape "default" {
+  targets    = prometheus.exporter.unix.default.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "60s"
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = env("GCLOUD_HOSTED_METRICS_URL")
+
+    basic_auth {
+      username = env("GCLOUD_HOSTED_METRICS_ID")
+      password = env("GCLOUD_RW_API_KEY")
+    }
+  }
+}
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    target_label  = "container"
+    regex         = "/(.*)"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "stream"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.containers.targets
+  forward_to = [loki.process.docker.receiver]
+  relabel_rules = discovery.relabel.docker.rules
+}
+
+loki.process "docker" {
+  forward_to = [loki.write.default.receiver]
+  stage.docker {}
+}
+
+loki.write "default" {
+  endpoint {
+    url = env("GCLOUD_HOSTED_LOGS_URL")
+
+    basic_auth {
+      username = env("GCLOUD_HOSTED_LOGS_ID")
+      password = env("GCLOUD_RW_API_KEY")
+    }
+  }
+}
