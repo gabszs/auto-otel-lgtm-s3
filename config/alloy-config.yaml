@@ -9,14 +9,23 @@ remotecfg {
   }
 }
 
-prometheus.exporter.unix "default" {
-  disable_collectors = ["mdadm"]
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+    logs    = [otelcol.exporter.loki.default.input]
+    traces  = [otelcol.exporter.otlphttp.traces.input]
+  }
 }
 
-prometheus.scrape "default" {
-  targets    = prometheus.exporter.unix.default.targets
+otelcol.exporter.prometheus "default" {
   forward_to = [prometheus.remote_write.default.receiver]
-  scrape_interval = "60s"
 }
 
 prometheus.remote_write "default" {
@@ -30,38 +39,8 @@ prometheus.remote_write "default" {
   }
 }
 
-discovery.docker "containers" {
-  host = "unix:///var/run/docker.sock"
-}
-
-discovery.relabel "docker" {
-  targets = discovery.docker.containers.targets
-
-  rule {
-    source_labels = ["__meta_docker_container_name"]
-    target_label  = "container"
-    regex         = "/(.*)"
-  }
-  rule {
-    source_labels = ["__meta_docker_container_log_stream"]
-    target_label  = "stream"
-  }
-  rule {
-    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
-    target_label  = "service"
-  }
-}
-
-loki.source.docker "containers" {
-  host       = "unix:///var/run/docker.sock"
-  targets    = discovery.docker.containers.targets
-  forward_to = [loki.process.docker.receiver]
-  relabel_rules = discovery.relabel.docker.rules
-}
-
-loki.process "docker" {
+otelcol.exporter.loki "default" {
   forward_to = [loki.write.default.receiver]
-  stage.docker {}
 }
 
 loki.write "default" {
@@ -73,4 +52,17 @@ loki.write "default" {
       password = env("GCLOUD_RW_API_KEY")
     }
   }
+}
+
+otelcol.exporter.otlphttp "traces" {
+  client {
+    endpoint = env("GCLOUD_HOSTED_TRACES_URL")
+
+    auth = otelcol.auth.basic.traces.handler
+  }
+}
+
+otelcol.auth.basic "traces" {
+  username = env("GCLOUD_HOSTED_TRACES_ID")
+  password = env("GCLOUD_RW_API_KEY")
 }
