@@ -8,9 +8,9 @@ remotecfg {
     password = env("GCLOUD_RW_API_KEY")
   }
 
-  attributes = {
-    "hostname" = env("ALLOY_NODE_NAME")
-  }
+  # attributes = {
+  #   "hostname" = env("ALLOY_NODE_NAME")
+  # }
 }
 
 otelcol.receiver.otlp "default" {
