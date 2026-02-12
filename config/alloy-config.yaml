@@ -64,7 +64,7 @@ prometheus.exporter.postgres "postgres_auth" {
 }
 
 database_observability.postgres "postgres_auth_fastapi" {
-  data_source_name  = env("POSTGRES_DSN")
+  data_source_name  = env("AUTH_FASTAPI_POSTGRES_DSN")
   forward_to        = [loki.relabel.database_observability_postgres_auth_fastapi.receiver]
   targets           = prometheus.exporter.postgres.postgres_auth_fastapi.targets
   enable_collectors = ["query_details", "query_samples", "schema_details", "explain_plans"]
