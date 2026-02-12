@@ -20,7 +20,6 @@ otelcol.receiver.otlp "default" {
   output {
     metrics = [otelcol.exporter.prometheus.default.input]
     logs    = [otelcol.exporter.loki.default.input]
-    traces  = [otelcol.exporter.otlphttp.traces.input]
   }
 }
 
@@ -52,17 +51,4 @@ loki.write "default" {
       password = env("GCLOUD_RW_API_KEY")
     }
   }
-}
-
-otelcol.exporter.otlphttp "traces" {
-  client {
-    endpoint = env("GCLOUD_HOSTED_TRACES_URL")
-
-    auth = otelcol.auth.basic.traces.handler
-  }
-}
-
-otelcol.auth.basic "traces" {
-  username = env("GCLOUD_HOSTED_TRACES_ID")
-  password = env("GCLOUD_RW_API_KEY")
 }
