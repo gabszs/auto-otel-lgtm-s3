@@ -7,17 +7,12 @@ remotecfg {
     username = env("GCLOUD_FM_HOSTED_ID")
     password = env("GCLOUD_RW_API_KEY")
   }
-
-  # attributes = {
-  #   "hostname" = env("ALLOY_NODE_NAME")
-  # }
 }
 
 otelcol.receiver.otlp "default" {
   grpc {
     endpoint = "0.0.0.0:4317"
   }
-
   http {
     endpoint = "0.0.0.0:4318"
   }
