@@ -1,29 +1,11 @@
 version: '3.8'
 services:
-  # fastapi:
-  #   build:
-  #     context: ./fastapi_automatic_instrumentalization
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
-  #     - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
-  #     - OTEL_EXPORTER_OTLP_INSECURE=true
-  #     - OTEL_LOGS_EXPORTER=otlp
-  #     - OTEL_SERVICE_NAME=staging-jsonfy-admin
-  #     # - OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf" # if your are using otel-collector:4318/http
-  #   depends_on:
-  #     - otel-collector
-
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     restart: unless-stopped
-    volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-    command:
-      - --config=/etc/otel-collector-config.yaml
-      - --feature-gates=service.profilesSupport
+    env_file:
+      - stack.env
     ports:
       - 13133:13133
       - 4317:4317
@@ -36,10 +18,11 @@ services:
       - tempo
       - pyroscope
       - prometheus
-    env_file:
-      - stack.env
-    # networks:
-    #   - proxy
+    volumes:
+      - /root/easy-lgtm/config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command:
+      - --config=/etc/otel-collector-config.yaml
+      - --feature-gates=service.profilesSupport
 
   alloy:
     image: grafana/alloy:latest
@@ -50,9 +33,7 @@ services:
     ports:
       - "12345:12345"
     volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/prometheus.yaml:/etc/alloy/config.alloy
-    ports:
-      - "12345:12345"
+      - /root/easy-lgtm/config/prometheus.yaml:/etc/alloy/config.alloy
     command:
       - run
       - /etc/alloy/config.alloy
@@ -66,15 +47,12 @@ services:
     ports:
       - 9090:9090
     volumes:
-      # - prometheus-data:/prometheus
-      - /root/fastapi-automatic-otel-lgtm-s3/config/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - /root/easy-lgtm/config/prometheus.yaml:/etc/prometheus/prometheus.yaml
     command:
       - --config.file=/etc/prometheus/prometheus.yaml
       - --enable-feature=remote-write-receiver
       - --enable-feature=exemplar-storage
       - --enable-feature=native-histograms
-    # networks:
-    #   - proxy
 
   mimir:
     image: grafana/mimir:latest
@@ -83,13 +61,10 @@ services:
     env_file:
       - stack.env
     volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/mimir-config.yaml:/etc/mimir.yaml
-      # - /root/fastapi-automatic-otel-lgtm-s3/config/alert/mimir-alertmanager-fallback-config.yaml:/etc/mimir/alertmanager-fallback-config.yaml
-      # - mimir-data:/data
+      - /root/easy-lgtm/config/mimir-config.yaml:/etc/mimir.yaml
     command:
       - --config.file=/etc/mimir.yaml
       - --config.expand-env=true
-
 
   pyroscope:
     image: grafana/pyroscope:latest
@@ -102,13 +77,11 @@ services:
     env_file:
       - stack.env
     volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/pyroscope-config.yaml:/etc/pyroscope/server.yaml
+      - /root/easy-lgtm/config/pyroscope-config.yaml:/etc/pyroscope/server.yaml
       - pyroscope-data:/data/pyroscope
     command:
       - --config.file=/etc/pyroscope/server.yaml
       - --config.expand-env=true
-    # networks:
-    #   - proxy
 
   loki:
     image: grafana/loki:latest
@@ -119,10 +92,8 @@ services:
     env_file:
       - stack.env
     volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/loki-config.yaml:/etc/loki/config.yaml
+      - /root/easy-lgtm/config/loki-config.yaml:/etc/loki/config.yaml
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
-    # networks:
-    #   - proxy
 
   tempo:
     image: grafana/tempo:2.8.2
@@ -133,10 +104,8 @@ services:
     env_file:
       - stack.env
     volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/tempo-config.yaml:/etc/tempo/tempo-config.yaml
+      - /root/easy-lgtm/config/tempo-config.yaml:/etc/tempo/tempo-config.yaml
     command: -config.file=/etc/tempo/tempo-config.yaml -config.expand-env=true
-    # networks:
-    #   - proxy
 
   grafana:
     image: grafana/grafana:latest
@@ -146,55 +115,11 @@ services:
       - "3000:3000"
     env_file:
       - stack.env
-    # environment:
-    #   GF_DATABASE_TYPE: postgres
-    #   GF_DATABASE_HOST: grafana-db:5432
-    #   GF_DATABASE_NAME: grafana
-    #   GF_DATABASE_USER: grafana
-    #   GF_DATABASE_PASSWORD: grafana_pass
-    #   GF_DATABASE_SSL_MODE: disable
-    #   GF_SERVER_ROOT_URL: http://localhost:3000
-    #   GF_LOG_MODE: console
-    #   GF_LOG_LEVEL: info
-    #   GF_SECURITY_ADMIN_USER: admin
-    #   GF_SECURITY_ADMIN_PASSWORD: admin
     volumes:
-      - /root/fastapi-automatic-otel-lgtm-s3/config/grafana/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/grafana-dashboards.yaml
-      - /root/fastapi-automatic-otel-lgtm-s3/config/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - /root/fastapi-automatic-otel-lgtm-s3/dashboards:/var/lib/grafana/dashboards
-    # networks:
-    #   - proxy
-
-  # grafana-db:
-  #   image: postgres:15
-  #   container_name: grafana-db
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: grafana
-  #     POSTGRES_PASSWORD: grafana_pass
-  #     POSTGRES_DB: grafana
-  #   volumes:
-  #     - grafana-db-data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  #   networks:
-  #     - proxy
-
-  # postgres_exporter:
-  #   image: quay.io/prometheuscommunity/postgres-exporter:latest
-  #   container_name: postgres_exporter
-  #   env_file:
-  #     - stack.env
-  #   environment:
-  #     - DATA_SOURCE_NAME=${POSTGRES_PROD_DATABASE_URL}
-  #   restart: unless-stopped
-
-# networks:
-#   proxy:
-#     external: true
-#     name: proxy
+      - /root/easy-lgtm/config/grafana/grafana-dashboards.yaml:/etc/grafana/provisioning/dashboards/grafana-dashboards.yaml
+      - /root/easy-lgtm/config/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - /root/easy-lgtm/dashboards:/var/lib/grafana/dashboards
 
 volumes:
   pyroscope-data:
   prometheus-data:
-  # mimir-data:
