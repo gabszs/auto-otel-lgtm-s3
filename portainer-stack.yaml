@@ -35,7 +35,7 @@ services:
       - 4517:4317
       - 4518:4318
     volumes:
-      - /root/easy-lgtm/config/prometheus.yaml:/etc/alloy/config.alloy
+      - /root/easy-lgtm/config/alloy-config.yaml:/etc/alloy/config.alloy
     command:
       - run
       - /etc/alloy/config.alloy
