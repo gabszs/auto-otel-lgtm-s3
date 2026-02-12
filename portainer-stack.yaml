@@ -49,6 +49,15 @@ services:
       - stack.env
     ports:
       - "12345:12345"
+    volumes:
+      - /root/fastapi-automatic-otel-lgtm-s3/config/prometheus.yaml:/etc/alloy/config.alloy
+    ports:
+      - "12345:12345"
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
 
   prometheus:
     image: prom/prometheus:latest
