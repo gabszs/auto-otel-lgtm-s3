@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
@@ -41,6 +42,8 @@ services:
       - /etc/alloy/config.alloy
       - --server.http.listen-addr=0.0.0.0:12345
       - --storage.path=/var/lib/alloy/data
+      - --cluster.node-name=${ALLOY_NODE_NAME}
+      - --stability.level=public-preview
 
   prometheus:
     image: prom/prometheus:latest
