@@ -31,7 +31,9 @@ services:
     env_file:
       - stack.env
     ports:
-      - "12345:12345"
+      - 12345:12345
+      - 4517:4317
+      - 4518:4318
     volumes:
       - /root/easy-lgtm/config/prometheus.yaml:/etc/alloy/config.alloy
     command:
