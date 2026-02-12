@@ -6,6 +6,9 @@ remotecfg {
   basic_auth {
     username = env("GCLOUD_FM_HOSTED_ID")
     password = env("GCLOUD_RW_API_KEY")
+
+  attributes = {
+    "hostname" = env("ALLOY_NODE_NAME"),
   }
 }
 
