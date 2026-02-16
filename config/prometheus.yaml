@@ -11,6 +11,7 @@ otlp:
     - cloud.region
     - container.name
     - deployment.environment.name
+    - deployment.environment
     - k8s.cluster.name
     - k8s.container.name
     - k8s.cronjob.name
