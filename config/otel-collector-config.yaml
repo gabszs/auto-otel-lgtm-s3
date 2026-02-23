@@ -118,6 +118,7 @@ service:
   telemetry:
     metrics:
       level: detailed
+
   pipelines:
     traces:
       receivers: [otlp]
