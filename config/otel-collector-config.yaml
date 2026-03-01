@@ -22,11 +22,16 @@ extensions:
   health_check:
     endpoint: 0.0.0.0:13133
     path: "/health"
+    
   basicauth/grafana_cloud:
     client_auth:
       username: "$GF_LABS_COLLECTOR_USER_ID"
       password: "$GF_LABS_COLLECTOR_API_KEY"
 
+  bearertokenauth/dash0:
+    scheme: Bearer
+    token: "$DASH0_AUTHORIZATION_TOKEN"
+  
 processors:
   batch:
     send_batch_max_size: 100
@@ -111,10 +116,20 @@ exporters:
     tls:
       insecure: true
 
+  # Pyroscope
+  otlp/dash0:
+    auth:
+      authenticator: bearertokenauth/dash0
+    endpoint: ingress.us-west-2.aws.dash0.com:4317
+    headers:
+      Dash0-Dataset: default
+
 service:
   extensions:
     - health_check
     - basicauth/grafana_cloud
+    - bearertokenauth/dash0
+
   telemetry:
     metrics:
       level: detailed
@@ -123,7 +138,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward]
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, otlp/dash0, forward]
 
     traces/ollygarden:
       receivers: [forward]
@@ -133,7 +148,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward]
+      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, otlp/dash0, forward]
 
     logs/ollygarden:
       receivers: [forward]
@@ -143,7 +158,7 @@ service:
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp/dash0]
       
     profiles:
       receivers: [otlp]
