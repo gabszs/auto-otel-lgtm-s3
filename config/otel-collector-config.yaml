@@ -111,6 +111,13 @@ exporters:
     tls:
       insecure: true
 
+  otlp_http/openobserve:
+    endpoint: http://openobserve:5080/api/default
+    headers:
+      Authorization: Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM=
+    tls:
+      insecure: true
+
 service:
   extensions:
     - health_check
@@ -123,7 +130,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward]
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, otlp_http/openobserve, forward]
 
     traces/ollygarden:
       receivers: [forward]
@@ -133,7 +140,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward]
+      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, otlp_http/openobserve, forward]
 
     logs/ollygarden:
       receivers: [forward]
@@ -143,7 +150,7 @@ service:
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_http/openobserve]
       
     profiles:
       receivers: [otlp]
