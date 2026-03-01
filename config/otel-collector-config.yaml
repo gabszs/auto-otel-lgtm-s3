@@ -30,7 +30,7 @@ extensions:
 
   bearertokenauth/dash0:
     scheme: Bearer
-    token: "$DASH0_AUTHORIZATION_TOKEN"
+    token: "${DASH0_AUTHORIZATION_TOKEN}"
   
 processors:
   batch:
