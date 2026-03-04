@@ -23,7 +23,7 @@ services:
       - /root/easy-lgtm/config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     command:
       - --config=/etc/otel-collector-config.yaml
-      - --feature-gates=service.profilesSupport
+      - --feature-gates=service.profilesSupport,receiver.postgresql.separateSchemaAttr
 
   alloy:
     image: grafana/alloy:latest
