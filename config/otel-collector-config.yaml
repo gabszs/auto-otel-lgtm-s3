@@ -9,6 +9,7 @@ receivers:
             - http://*
       grpc:
         endpoint: 0.0.0.0:4317
+
   hostmetrics:
     collection_interval: 10s
     scrapers:
@@ -18,6 +19,22 @@ receivers:
       network: {}
       disk: {}
 
+  postgresql:
+    endpoint: 192.168.1.3:5432
+    transport: tcp
+    username: ${env:POSTGRESQL_USER}
+    password: ${env:POSTGRESQL_PASSWORD}
+    databases:
+      - app_db
+    collection_interval: 10s
+    events:
+      db.server.query_sample:
+        enabled: true
+      db.server.top_query:
+        enabled: true
+    tls:
+      insecure: true
+
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
@@ -25,8 +42,8 @@ extensions:
     
   basicauth/grafana_cloud:
     client_auth:
-      username: "$GF_LABS_COLLECTOR_USER_ID"
-      password: "$GF_LABS_COLLECTOR_API_KEY"
+      username: "${GF_LABS_COLLECTOR_USER_ID}"
+      password: "${GF_LABS_COLLECTOR_API_KEY}"
 
   bearertokenauth/dash0:
     scheme: Bearer
