@@ -195,13 +195,13 @@ service:
     #   processors: [transform/system_metrics, batch]
     #   exporters: [prometheus]
 
-    # metrics/postgres:
-    #   receivers: [postgresql/password_service]
-    #   processors: [resource/postgresql, batch]
-    #   exporters: [prometheus, otlp_http/hdx, otlp_http/grafana]
+    metrics/postgres:
+      receivers: [postgresql/password_service]
+      processors: [resource/postgresql, batch]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/grafana]
 
     metrics:
-      receivers: [otlp, hostmetrics]
+      receivers: [otlp]
       processors: [batch]
       exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0]
       
