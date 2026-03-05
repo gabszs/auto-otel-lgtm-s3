@@ -27,11 +27,11 @@ receivers:
     databases:
       - app_db
     collection_interval: 10s
-    events:
-      db.server.query_sample:
-        enabled: true
-      db.server.top_query:
-        enabled: true
+    # events:
+    #   db.server.query_sample:
+    #     enabled: true
+    #   db.server.top_query:
+    #     enabled: true
     tls:
       insecure: true
 
