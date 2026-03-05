@@ -75,6 +75,15 @@ processors:
           # Redact tokens/authorization + sufixos extras
           - replace_pattern(span.attributes["http.request.body"], "(\"(authorization|token|bearer)\"\\s*:\\s*\")([^\"]*)(\")[^,}\\s]*", "$$1***REDACTED***$$3")
 
+  resource/postgresql:
+    attributes:
+      - key: service.name
+        value: postgresql
+        action: upsert
+      - key: service.instance.id
+        value: "192.168.1.3:5432"
+        action: upsert
+
 connectors:
   forward: {}
 
@@ -177,8 +186,13 @@ service:
       processors: [batch]
       exporters: [prometheus]
 
+    metrics/postgres:
+      receivers: [postgresql/password_service]
+      processors: [resource/postgresql, batch]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/grafana, otlp_grpc/dash0
+
     metrics:
-      receivers: [otlp, postgresql/password_service]
+      receivers: [otlp]
       processors: [batch]
       exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0]
       
