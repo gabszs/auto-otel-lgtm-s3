@@ -192,7 +192,7 @@ service:
 
     metrics/system:
       receivers: [hostmetrics]
-      processors: [batch]
+      processors: [transform/system_metrics, batch]
       exporters: [prometheus]
 
     metrics/postgres:
