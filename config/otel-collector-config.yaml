@@ -20,18 +20,18 @@ receivers:
       disk: {}
 
   postgresql/password_service:
-    endpoint: 192.168.1.3:5432
+    endpoint: "${OTEL_POSTGRESQL_HOST}"
     transport: tcp
-    username: "${POSTGRESQL_USER}"
-    password: "${POSTGRESQL_PASSWORD}"
+    username: "${OTEL_POSTGRESQL_USER}"
+    password: "${OTEL_POSTGRESQL_PASSWORD}"
     databases:
       - app_db
     collection_interval: 10s
-    # events:
-    #   db.server.query_sample:
-    #     enabled: true
-    #   db.server.top_query:
-    #     enabled: true
+    events:
+      db.server.query_sample:
+        enabled: true
+      db.server.top_query:
+        enabled: true
     tls:
       insecure: true
 
