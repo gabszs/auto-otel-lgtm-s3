@@ -19,7 +19,7 @@ receivers:
       network: {}
       disk: {}
 
-  postgresql:
+  postgresql/password_service:
     endpoint: 192.168.1.3:5432
     transport: tcp
     username: "${POSTGRESQL_USER}"
@@ -175,7 +175,7 @@ service:
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0, postgresql/password_service]
       
     profiles:
       receivers: [otlp]
