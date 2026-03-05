@@ -77,11 +77,20 @@ processors:
 
   resource/postgresql:
     attributes:
-      - key: service.name
-        value: postgresql
-        action: upsert
       - key: service.host
         value: "192.168.1.3:5432"
+        action: upsert
+      - key: service.name
+        value: postgresql-password-service
+        action: upsert
+      - key: job
+        value: "integrations/db-o11y"
+        action: upsert
+      - key: instance
+        value: "192.168.1.3:5432"
+        action: upsert
+      - key: db_name
+        value: "app_db"
         action: upsert
 
 connectors:
