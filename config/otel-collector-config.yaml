@@ -89,9 +89,6 @@ processors:
       - key: instance
         value: "192.168.1.3:5443"
         action: insert
-      - key: db_name
-        value: "app_db"
-        action: insert
 
 connectors:
   forward: {}
