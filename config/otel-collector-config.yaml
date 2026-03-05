@@ -102,8 +102,6 @@ exporters:
     endpoint: ${GF_LABS_COLLECTOR_URL}
     auth:
       authenticator: basicauth/grafana_cloud
-    # headers:
-    #   authorization: ${GF_LABS_AUTH_HEADER}
       
   # hyper-dx
   otlp_http/hdx:
