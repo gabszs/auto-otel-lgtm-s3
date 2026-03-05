@@ -189,7 +189,7 @@ service:
     metrics/postgres:
       receivers: [postgresql/password_service]
       processors: [resource/postgresql, batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/grafana, otlp_grpc/dash0
+      exporters: [prometheus, otlp_http/hdx, otlp_http/grafana]
 
     metrics:
       receivers: [otlp]
