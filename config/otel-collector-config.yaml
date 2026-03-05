@@ -42,8 +42,8 @@ extensions:
     
   basicauth/grafana_cloud:
     client_auth:
-      username: "${GF_LABS_COLLECTOR_USER_ID}"
-      password: "${GF_LABS_COLLECTOR_API_KEY}"
+      username: "${env:GF_LABS_COLLECTOR_USER_ID}"
+      password: "${env:GF_LABS_COLLECTOR_API_KEY}"
 
   bearertokenauth/dash0:
     scheme: Bearer
@@ -100,8 +100,10 @@ exporters:
   # grafana labs
   otlp_http/grafana:
     endpoint: ${GF_LABS_COLLECTOR_URL}
-    headers:
-      authorization: ${GF_LABS_AUTH_HEADER}
+    auth:
+      authenticator: basicauth/grafana_cloud
+    # headers:
+    #   authorization: ${GF_LABS_AUTH_HEADER}
       
   # hyper-dx
   otlp_http/hdx:
