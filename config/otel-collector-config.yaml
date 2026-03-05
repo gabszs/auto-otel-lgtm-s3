@@ -172,8 +172,13 @@ service:
       processors: [probabilistic_sampler, batch]
       exporters: [otlp_http/ollygarden]
 
+    metrics/system:
+      receivers: [hostmetrics]
+      processors: [batch]
+      exporters: [prometheus]
+
     metrics:
-      receivers: [otlp, hostmetrics]
+      receivers: [otlp]
       processors: [batch]
       exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0, postgresql/password_service]
       
