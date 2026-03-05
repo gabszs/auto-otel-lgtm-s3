@@ -78,7 +78,7 @@ processors:
   resource/postgresql:
     attributes:
       - key: service.host
-        value: "192.168.1.3:5433"
+        value: "192.168.1.3:5443"
         action: insert
       - key: service.name
         value: postgresql-password-service
@@ -87,7 +87,7 @@ processors:
         value: "integrations/db-o11y"
         action: insert
       - key: instance
-        value: "192.168.1.3:5433"
+        value: "192.168.1.3:5443"
         action: insert
       - key: db_name
         value: "app_db"
