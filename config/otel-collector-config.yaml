@@ -201,7 +201,7 @@ service:
     #   exporters: [prometheus, otlp_http/hdx, otlp_http/grafana]
 
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, hostmetrics]
       processors: [batch]
       exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0]
       
