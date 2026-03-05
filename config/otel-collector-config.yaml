@@ -178,9 +178,9 @@ service:
       exporters: [prometheus]
 
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, postgresql/password_service]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0, postgresql/password_service]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0]
       
     profiles:
       receivers: [otlp]
