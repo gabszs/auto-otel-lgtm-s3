@@ -19,21 +19,21 @@ receivers:
       network: {}
       disk: {}
 
-  postgresql/password_service:
-    endpoint: "${OTEL_POSTGRESQL_HOST}"
-    transport: tcp
-    username: "${OTEL_POSTGRESQL_USER}"
-    password: "${OTEL_POSTGRESQL_PASSWORD}"
-    databases:
-      - "${OTEL_POSTGRESQL_DB}"
-    collection_interval: 10s
-    events:
-      db.server.query_sample:
-        enabled: true
-      db.server.top_query:
-        enabled: true
-    tls:
-      insecure: true
+  # postgresql/password_service:
+  #   endpoint: "${OTEL_POSTGRESQL_HOST}"
+  #   transport: tcp
+  #   username: "${OTEL_POSTGRESQL_USER}"
+  #   password: "${OTEL_POSTGRESQL_PASSWORD}"
+  #   databases:
+  #     - "${OTEL_POSTGRESQL_DB}"
+  #   collection_interval: 10s
+  #   events:
+  #     db.server.query_sample:
+  #       enabled: true
+  #     db.server.top_query:
+  #       enabled: true
+  #   tls:
+  #     insecure: true
 
 extensions:
   health_check:
@@ -190,15 +190,10 @@ service:
       processors: [probabilistic_sampler, batch]
       exporters: [otlp_http/ollygarden]
 
-    # metrics/system:
-    #   receivers: [hostmetrics]
-    #   processors: [transform/system_metrics, batch]
-    #   exporters: [prometheus]
-
-    metrics/postgres:
-      receivers: [postgresql/password_service]
-      processors: [resource/postgresql, batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/grafana]
+    # metrics/postgres:
+    #   receivers: [postgresql/password_service]
+    #   processors: [resource/postgresql, batch]
+    #   exporters: [prometheus, otlp_http/hdx, otlp_http/grafana]
 
     metrics:
       receivers: [otlp, hostmetrics]
