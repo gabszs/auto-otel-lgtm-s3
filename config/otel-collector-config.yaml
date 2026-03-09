@@ -152,18 +152,18 @@ exporters:
       insecure: true
 
   # Pyroscope
-  otlp_grpc/dash0:
-    auth:
-      authenticator: bearertokenauth/dash0
-    endpoint: ingress.us-west-2.aws.dash0.com:4317
-    headers:
-      Dash0-Dataset: default
+  # otlp_grpc/dash0:
+  #   auth:
+  #     authenticator: bearertokenauth/dash0
+  #   endpoint: ingress.us-west-2.aws.dash0.com:4317
+  #   headers:
+  #     Dash0-Dataset: default
 
 service:
   extensions:
     - health_check
     - basicauth/grafana_cloud
-    - bearertokenauth/dash0
+    # - bearertokenauth/dash0
 
   telemetry:
     metrics:
@@ -173,7 +173,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, otlp_grpc/dash0, forward]
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward]
 
     traces/ollygarden:
       receivers: [forward]
@@ -183,7 +183,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, otlp_grpc/dash0, forward]
+      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward]
 
     logs/ollygarden:
       receivers: [forward]
@@ -198,7 +198,7 @@ service:
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_grpc/dash0]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana]
       
     profiles:
       receivers: [otlp]
