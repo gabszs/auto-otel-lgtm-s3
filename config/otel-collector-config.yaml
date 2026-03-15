@@ -187,7 +187,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, otlp_http/signoz, forward]
+      exporters: [otlp_http/loki, otlp_http/signoz, otlp_http/hdx, otlp_http/grafana, forward]
 
     logs/ollygarden:
       receivers: [forward]
