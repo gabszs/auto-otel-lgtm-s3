@@ -177,7 +177,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, otlp_http/signoz, forward]
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/signoz, forward]
 
     traces/ollygarden:
       receivers: [forward]
