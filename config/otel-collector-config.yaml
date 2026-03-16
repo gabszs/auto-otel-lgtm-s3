@@ -111,8 +111,8 @@ exporters:
     compression: gzip
 
   # signoz
-  otlp_http/signoz:
-    endpoint: 'http://192.168.1.3:4348'
+  # otlp_http/signoz:
+  #   endpoint: 'http://192.168.1.3:4348'
 
   # OllyGarden
   otlp_http/ollygarden:
@@ -177,7 +177,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/signoz, otlp_http/grafana, forward]
+      exporters: [otlp_grpc/tempo, otlp_http/hdx, otlp_http/grafana, forward]
 
     traces/ollygarden:
       receivers: [forward]
@@ -187,7 +187,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/loki, otlp_http/signoz, otlp_http/hdx, otlp_http/grafana, forward]
+      exporters: [otlp_http/loki, otlp_http/hdx, otlp_http/grafana, forward]
 
     logs/ollygarden:
       receivers: [forward]
@@ -202,7 +202,7 @@ service:
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana, otlp_http/signoz]
+      exporters: [prometheus, otlp_http/hdx, otlp_http/ollygarden, otlp_http/grafana]
       
     profiles:
       receivers: [otlp]
