@@ -147,7 +147,7 @@ exporters:
       insecure: true
 
   otlp_http/lb:
-    endpoint: http://192.168.1.3:4318
+    endpoint: http://192.168.1.3:4358
 
 service:
   extensions:
