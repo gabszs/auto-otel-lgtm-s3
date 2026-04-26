@@ -92,7 +92,8 @@ exporters:
     retry_on_failure:
       enabled: true
       initial_interval: 5s
-      max_elapsed_time: 6s   # expira logo após a 1ª retentativa → descarta na 2ª falha
+      max_interval: 5s        # sem backoff exponencial — mantém 5s fixo
+      max_elapsed_time: 10s   # tempo total: tentativa 1 + 5s de espera + tentativa 2 → descarta
 
   otlp_http/grafana:
     endpoint: ${GF_LABS_COLLECTOR_URL}
@@ -105,7 +106,8 @@ exporters:
     retry_on_failure:
       enabled: true
       initial_interval: 5s
-      max_elapsed_time: 6s
+      max_interval: 5s        # sem backoff exponencial — mantém 5s fixo
+      max_elapsed_time: 10s   # tempo total: tentativa 1 + 5s de espera + tentativa 2 → descarta
 
   otlp_http/ollygarden:
     endpoint: "https://in.ollygarden.cloud"
