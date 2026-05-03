@@ -44,7 +44,7 @@ processors:
     mode: proportional
 
   probabilistic_sampler/dash0:
-    sampling_percentage: 0.5
+    sampling_percentage: 100.0
     mode: proportional
 
   transform:
