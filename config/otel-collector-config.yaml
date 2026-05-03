@@ -164,7 +164,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_http/lb, otlp_grpc/tempo, otlp_http/grafana, forward] # , otlp_http/hdx
+      exporters: [otlp_http/lb, otlp_grpc/tempo, otlp_http/grafana, otlp_http/hdx, forward] # 
 
     traces/ollygarden:
       receivers: [forward]
@@ -179,7 +179,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/lb, otlp_http/loki, otlp_http/grafana, forward] # , otlp_http/hdx
+      exporters: [otlp_http/lb, otlp_http/loki, otlp_http/grafana, otlp_http/hdx, forward] # , otlp_http/hdx
 
     logs/ollygarden:
       receivers: [forward]
@@ -194,7 +194,7 @@ service:
     metrics:
       receivers: [otlp, hostmetrics]
       processors: [batch]
-      exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/grafana] # , otlp_http/hdx
+      exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/hdx, otlp_http/grafana] # , otlp_http/hdx
 
     profiles:
       receivers: [otlp]
