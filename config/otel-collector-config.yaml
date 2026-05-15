@@ -19,6 +19,16 @@ receivers:
       network: {}
       disk: {}
 
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: proxmox
+          scrape_interval: 30s
+
+          static_configs:
+            - targets:
+                - 192.168.1.22:9221
+
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
@@ -192,7 +202,7 @@ service:
       exporters: [otlp_grpc/dash0]
 
     metrics:
-      receivers: [otlp, hostmetrics]
+      receivers: [otlp, hostmetrics, prometheus]
       processors: [batch]
       exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/hdx, otlp_http/grafana] # , otlp_http/hdx
 
