@@ -27,7 +27,7 @@ receivers:
 
           static_configs:
             - targets:
-                - 192.168.1.22:9221
+                - 192.168.1.13:9221
 
 extensions:
   health_check:
