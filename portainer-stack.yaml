@@ -113,7 +113,7 @@ services:
     command: -config.file=/etc/tempo/tempo-config.yaml -config.expand-env=true
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.0
     container_name: grafana
     restart: unless-stopped
     ports:
