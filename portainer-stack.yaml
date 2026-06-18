@@ -20,6 +20,7 @@ services:
       - pyroscope
       - prometheus
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /root/easy-lgtm/config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     command:
       - --config=/etc/otel-collector-config.yaml
