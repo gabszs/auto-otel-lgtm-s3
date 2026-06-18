@@ -22,6 +22,11 @@ receivers:
   docker_stats:
     endpoint: unix:///var/run/docker.sock
     collection_interval: 10s
+    resource_attributes:
+      host.name:
+        enabled: true
+    env_resources_attributes:
+      - container.label.com.docker.compose.project
 
   prometheus:
     config:
