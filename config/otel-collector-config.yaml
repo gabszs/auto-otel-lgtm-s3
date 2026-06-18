@@ -10,14 +10,18 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:4317
 
-  hostmetrics:
-    collection_interval: 180s
-    scrapers:
-      cpu: {}
-      memory: {}
-      load: {}
-      network: {}
-      disk: {}
+  # hostmetrics:
+  #   collection_interval: 180s
+  #   scrapers:
+  #     cpu: {}
+  #     memory: {}
+  #     load: {}
+  #     network: {}
+  #     disk: {}
+
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+    collection_interval: 10s
 
   prometheus:
     config:
@@ -210,7 +214,7 @@ service:
       exporters: [otlp_grpc/dash0]
 
     metrics:
-      receivers: [otlp, hostmetrics, prometheus]
+      receivers: [otlp, docker_stats, prometheus]
       processors: [batch]
       exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/hdx, otlp_http/grafana] # , otlp_http/hdx
 
