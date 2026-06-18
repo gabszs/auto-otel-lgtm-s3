@@ -5,6 +5,7 @@ services:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     restart: unless-stopped
+    user: "0:0"
     env_file:
       - stack.env
     ports:
