@@ -10,15 +10,6 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:4317
 
-  # hostmetrics:
-  #   collection_interval: 180s
-  #   scrapers:
-  #     cpu: {}
-  #     memory: {}
-  #     load: {}
-  #     network: {}
-  #     disk: {}
-
   docker_stats:
     endpoint: unix:///var/run/docker.sock
     collection_interval: 10s
@@ -31,26 +22,20 @@ receivers:
   prometheus:
     config:
       scrape_configs:
-        - job_name: proxmox
-          metrics_path: /pve
-          params:
-            module: [default]
+        - job_name: docker-daemon
           static_configs:
-            - targets:
-                - 192.168.1.40
+            - targets: ['192.168.1.3:9323']
           relabel_configs:
-            - source_labels: [__address__]
-              target_label: __param_target
-            - source_labels: [__param_target]
-              target_label: instance
-            - target_label: __address__
-              replacement: 192.168.1.13:9221
+            - target_label: host_name
+              replacement: "pve-portainer"
+            - target_label: docker_host
+              replacement: "pve-portainer"
 
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
     path: "/health"
-    
+
   basicauth/grafana_cloud:
     client_auth:
       username: "${env:GF_LABS_COLLECTOR_USER_ID}"
@@ -94,6 +79,18 @@ processors:
         value: postgresql-password-service
         action: insert
 
+  # Força host.name e docker_host nas métricas do docker_stats
+  # O receiver docker_stats pega o hostname do container, não do host —
+  # esse processor sobrescreve com o valor correto da máquina física.
+  resource/docker_host:
+    attributes:
+      - key: host.name
+        value: "docker-portainer"   # resultado de: hostname
+        action: upsert           # upsert sobrescreve se já existir
+      - key: docker_host
+        value: "docker-portainer"
+        action: insert
+
   transform/system_metrics:
     error_mode: ignore
     metric_statements:
@@ -119,8 +116,8 @@ exporters:
     retry_on_failure:
       enabled: true
       initial_interval: 5s
-      max_interval: 5s        # sem backoff exponencial — mantém 5s fixo
-      max_elapsed_time: 10s   # tempo total: tentativa 1 + 5s de espera + tentativa 2 → descarta
+      max_interval: 5s
+      max_elapsed_time: 10s
 
   otlp_http/grafana:
     endpoint: ${GF_LABS_COLLECTOR_URL}
@@ -133,8 +130,8 @@ exporters:
     retry_on_failure:
       enabled: true
       initial_interval: 5s
-      max_interval: 5s        # sem backoff exponencial — mantém 5s fixo
-      max_elapsed_time: 10s   # tempo total: tentativa 1 + 5s de espera + tentativa 2 → descarta
+      max_interval: 5s
+      max_elapsed_time: 10s
 
   otlp_http/ollygarden:
     endpoint: "https://in.ollygarden.cloud"
@@ -181,7 +178,6 @@ service:
     - health_check
     - basicauth/grafana_cloud
     - bearertokenauth/dash0
-    # - opamp
 
   telemetry:
     metrics:
@@ -191,7 +187,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [transform, batch]
-      exporters: [otlp_http/lb, otlp_grpc/tempo, otlp_http/grafana, otlp_http/hdx, forward] # 
+      exporters: [otlp_http/lb, otlp_grpc/tempo, otlp_http/grafana, otlp_http/hdx, forward]
 
     traces/ollygarden:
       receivers: [forward]
@@ -206,7 +202,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp_http/lb, otlp_http/loki, otlp_http/grafana, otlp_http/hdx, forward] # , otlp_http/hdx
+      exporters: [otlp_http/lb, otlp_http/loki, otlp_http/grafana, otlp_http/hdx, forward]
 
     logs/ollygarden:
       receivers: [forward]
@@ -219,9 +215,14 @@ service:
       exporters: [otlp_grpc/dash0]
 
     metrics:
-      receivers: [otlp, docker_stats, prometheus]
-      processors: [batch]
-      exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/hdx, otlp_http/grafana] # , otlp_http/hdx
+      receivers: [otlp]
+      processors: [batch]   # resource/docker_host antes do batch
+      exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/hdx, otlp_http/grafana]
+
+    metrics/host-name:
+      receivers: [docker_stats, prometheus]
+      processors: [resource/docker_host, batch]   # resource/docker_host antes do batch
+      exporters: [otlp_http/lb, prometheus, otlp_http/ollygarden, otlp_http/hdx, otlp_http/grafana]
 
     profiles:
       receivers: [otlp]
